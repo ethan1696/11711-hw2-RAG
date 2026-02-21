@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Set, Tuple
+from typing import Dict, List, Optional, Set
 from urllib.parse import urlparse
 
 
@@ -46,11 +46,26 @@ class CrawlConfig:
     extract_links: bool = True
 
     def normalized_allowed_domains(self) -> Set[str]:
-        """Normalize domain allowlist for case-insensitive comparison."""
+        """Normalize domain allowlist.
+
+        Args:
+            self (CrawlConfig): Config object with the current ``allowed_domains`` list.
+
+        Returns:
+            Set[str]: Allowed domains normalized to lower case with leading dots removed.
+        """
         return {d.lower().lstrip(".") for d in self.allowed_domains}
 
     def in_scope(self, url: str) -> bool:
-        """Return True if URL is inside allowed domain constraints."""
+        """Check whether a URL is within configured crawl scope.
+
+        Args:
+            self (CrawlConfig): Config object defining the crawling allowlist.
+            url (str): URL to validate.
+
+        Returns:
+            bool: ``True`` if the URL host is within one of the allowed domains.
+        """
         try:
             parsed = urlparse(url)
             hostname = (parsed.netloc or "").lower()
@@ -82,6 +97,14 @@ class FetchResult:
 
     @property
     def ok(self) -> bool:
+        """Whether the fetch result should be considered successful.
+
+        Args:
+            self (FetchResult): Fetch result object being checked.
+
+        Returns:
+            bool: ``True`` when status code is in the 2xx/3xx range and ``error`` is unset.
+        """
         return self.error is None and self.status_code is not None and 200 <= self.status_code < 400
 
 
@@ -96,6 +119,14 @@ class ParseResult:
 
     @property
     def ok(self) -> bool:
+        """Whether parsing completed without an error.
+
+        Args:
+            self (ParseResult): Parse result object being checked.
+
+        Returns:
+            bool: ``True`` when ``parse_error`` is ``None``.
+        """
         return self.parse_error is None
 
 
