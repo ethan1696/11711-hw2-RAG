@@ -1,0 +1,573 @@
+seeds:
+- https://en.wikipedia.org/wiki/Pittsburgh
+- https://en.wikipedia.org/wiki/History_of_Pittsburgh
+- https://www.pittsburghpa.gov/Home
+- https://pittsburghpa.gov/finance/tax-forms
+- https://www.pittsburghpa.gov/files/assets/city/v/4/omb/documents/operating-budgets/2025-operating-budget.pdf
+- https://www.britannica.com/place/Pittsburgh
+- https://www.visitpittsburgh.com/
+- https://www.cmu.edu/about/
+- https://pittsburgh.events/
+- https://downtownpittsburgh.com/events/
+- https://www.pghcitypaper.com/pittsburgh/EventSearch?v=d
+- https://events.cmu.edu/month/
+- https://www.cmu.edu/engage/alumni/events/campus/index.html
+- https://www.pittsburghsymphony.org/
+- https://pittsburghopera.org/
+- https://trustarts.org/
+- https://carnegiemuseums.org/
+- https://www.heinzhistorycenter.org/
+- https://www.thefrickpittsburgh.org/
+- https://en.wikipedia.org/wiki/List_of_museums_in_Pittsburgh
+- https://www.visitpittsburgh.com/events-festivals/food-festivals/
+- https://www.picklesburgh.com/
+- https://www.pghtacofest.com/
+- https://pittsburghrestaurantweek.com/
+- https://littleitalydays.com/
+- https://bananasplitfest.com/
+- https://www.visitpittsburgh.com/things-to-do/pittsburgh-sports-teams/
+- https://www.mlb.com/pirates
+- https://www.steelers.com/
+- https://www.nhl.com/penguins
+- https://en.wikipedia.org/wiki/Fort_Duquesne
+- https://en.wikipedia.org/wiki/Fort_Pitt
+- https://en.wikipedia.org/wiki/Fort_Pitt_Block_House
+- https://en.wikipedia.org/wiki/Whiskey_Rebellion
+- https://en.wikipedia.org/wiki/Great_Fire_of_Pittsburgh
+- https://en.wikipedia.org/wiki/Homestead_strike
+- https://en.wikipedia.org/wiki/Point_State_Park
+- https://en.wikipedia.org/wiki/Golden_Triangle_(Pittsburgh)
+- https://en.wikipedia.org/wiki/Strip_District,_Pittsburgh
+- https://en.wikipedia.org/wiki/Shadyside,_Pittsburgh
+- https://en.wikipedia.org/wiki/Station_Square
+- https://en.wikipedia.org/wiki/Market_Square_(Pittsburgh)
+- https://en.wikipedia.org/wiki/Duquesne_Incline
+- https://en.wikipedia.org/wiki/Monongahela_Incline
+- https://en.wikipedia.org/wiki/Phipps_Conservatory_and_Botanical_Gardens
+- https://en.wikipedia.org/wiki/Carnegie_Museums_of_Pittsburgh
+- https://en.wikipedia.org/wiki/Senator_John_Heinz_History_Center
+- https://en.wikipedia.org/wiki/Andy_Warhol_Museum
+- https://en.wikipedia.org/wiki/Mattress_Factory
+- https://en.wikipedia.org/wiki/Carnegie_Library_of_Pittsburgh
+- https://en.wikipedia.org/wiki/Pittsburgh_Zoo_%26_PPG_Aquarium
+- https://en.wikipedia.org/wiki/Acrisure_Stadium
+- https://en.wikipedia.org/wiki/PPG_Paints_Arena
+- https://en.wikipedia.org/wiki/PNC_Park
+- https://en.wikipedia.org/wiki/Pittsburgh_Steelers
+- https://en.wikipedia.org/wiki/Pittsburgh_Penguins
+- https://en.wikipedia.org/wiki/Pittsburgh_Pirates
+- https://www.census.gov/quickfacts/fact/table/pittsburghcitypennsylvania/PST045225
+- https://www.pittsburghpa.gov/
+- https://www.pittsburghpa.gov/Recreation-Events/Parks/Our-Parks/Market-Square
+- https://www.dcnr.pa.gov/StateParks/FindAPark/PointStatePark
+- https://historicpittsburgh.org/
+- https://digital.library.pitt.edu/
+- https://digital.library.pitt.edu/collection/historic-pittsburgh-book-collection
+- https://phlf.org/
+- https://alleghenycourts.us/
+- https://pghbridges.com/
+- https://historicbridges.org/bridges/
+- https://engage.pittsburghpa.gov/city-bridges
+- https://www.rideprt.org/
+- https://www.duquesneincline.org/
+- https://www.monongahelaincline.com/
+- https://phipps.conservatory.org/
+- https://www.warhol.org/
+- https://mattress.org/
+- https://www.pittsburghzoo.org/
+- https://www.carnegielibrary.org/
+- https://stripdistrictbusinesses.org/
+- https://www.stripdistrictterminal.com/
+- https://www.stationsquare.com/history
+- https://www.marketsquarepgh.com/
+- https://downtownpittsburgh.com/
+- https://www.thinkshadyside.com/
+- https://positivelypittsburgh.com/
+- https://encyclopedia.fatherpitt.com/
+- https://en.wikipedia.org/wiki/Carnegie_Mellon_University
+- https://www.cmu.edu/about/history
+- https://www.cmu.edu/about/traditions
+- https://www.cmu.edu/directory-contact
+- https://www.cmu.edu/125/
+- https://www.cmu.edu/stugov/fence/index.html
+- https://www.cmu.edu/student-affairs/sit/traditions/index.html
+- https://www.cmu.edu/student-affairs/sit/traditions/scotty-saturday.html
+- https://coursecatalog.web.cmu.edu/aboutcmu/lookatcarnegiemellon/
+- https://www.cmu.edu/admission/majors-programs
+- https://athletics.cmu.edu/athletics/mascot/index
+- https://athletics.cmu.edu/athletics/mascot/about
+- https://athletics.cmu.edu/athletics/mascot/resume
+- https://www.cs.cmu.edu/
+- https://www.ri.cmu.edu/
+- https://ideate.cmu.edu/
+- https://openafs.org/
+- https://alice.org/
+- https://www.cs.cmu.edu/outreach/programs/alice
+- https://www.cs.cmu.edu/~sef/
+- https://www.cs.cmu.edu/~sef/sefSmiley.htm
+- https://www.cmu.edu/homepage/beyond/2007/summer/happy-25th-emoticon.shtml
+- https://www.springcarnival.org/
+- https://www.springcarnival.org/buggy.shtml
+- https://cmubuggy.org/
+- https://snstheatre.org/
+- https://scotchnsoda.org/
+- https://scotchnsoda.org/about/
+- https://pwning.net/
+- https://the-tartan.org/
+- https://en.wikipedia.org/wiki/University_of_Pittsburgh
+- https://pitt.edu
+- https://en.wikipedia.org/wiki/Cathedral_of_Learning
+- https://nationalityrooms.pitt.edu/
+- https://en.wikipedia.org/wiki/Nationality_Rooms
+- https://acrisurestadium.com/
+- https://www.ppgpaintsarena.com/
+- https://primantibros.com/
+- https://pamelasdiner.com/
+- https://eatgaucho.com/
+- https://aptekapgh.com/
+- https://morcillapittsburgh.com/
+- https://noodleheadpgh.com/
+- https://www.prantlsbakery.com/
+- https://churchbrew.com/
+- https://pusadeesgarden.com/
+- https://dianoiaseatery.com/
+- https://ironbornpizza.com/
+- https://www.driftwoodoven.com/
+- https://tessaros.com/
+- https://www.grandconcourserestaurant.com/
+- https://www.discovertheburgh.com/
+- https://pittsburgh.eater.com/
+- https://www.pittsburghmagazine.com/
+- https://www.pghcitypaper.com/
+domains:
+- domain: events.cmu.edu
+  backend: selenium
+  allowed_path_prefixes:
+  - /
+  selenium_wait_selector: body
+  selenium_wait_seconds: 6.0
+  rate_limit_seconds: 1.0
+- domain: pittsburgh.events
+  backend: selenium
+  allowed_path_prefixes:
+  - /
+  selenium_wait_selector: body
+  selenium_wait_seconds: 4.0
+  rate_limit_seconds: 1.0
+- domain: downtownpittsburgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 1.0
+- domain: pghcitypaper.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 1.0
+- domain: cmu.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: wikipedia.org
+  backend: requests
+  allowed_path_prefixes:
+  - /wiki/Pittsburgh
+  - /wiki/History_of_Pittsburgh
+  - /wiki/List_of_museums_in_Pittsburgh
+  rate_limit_seconds: 0.3
+- domain: pittsburghpa.gov
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: britannica.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: visitpittsburgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pittsburghsymphony.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pittsburghopera.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: trustarts.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: carnegiemuseums.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: heinzhistorycenter.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: thefrickpittsburgh.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: picklesburgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pghtacofest.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pittsburghrestaurantweek.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: littleitalydays.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: bananasplitfest.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: mlb.com
+  backend: requests
+  allowed_path_prefixes:
+  - /pirates
+  rate_limit_seconds: 0.3
+- domain: steelers.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: nhl.com
+  backend: requests
+  allowed_path_prefixes:
+  - /penguins
+  rate_limit_seconds: 0.3
+- domain: en.wikipedia.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: census.gov
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: dcnr.pa.gov
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: historicpittsburgh.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: digital.library.pitt.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: phlf.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: alleghenycourts.us
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pghbridges.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: historicbridges.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: engage.pittsburghpa.gov
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: rideprt.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: duquesneincline.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: monongahelaincline.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: phipps.conservatory.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: warhol.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: mattress.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pittsburghzoo.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: carnegielibrary.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: stripdistrictbusinesses.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: stripdistrictterminal.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: stationsquare.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: marketsquarepgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: thinkshadyside.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: positivelypittsburgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: encyclopedia.fatherpitt.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: coursecatalog.web.cmu.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: athletics.cmu.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: cs.cmu.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: ri.cmu.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: ideate.cmu.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: openafs.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: alice.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: springcarnival.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: cmubuggy.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: snstheatre.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: scotchnsoda.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pwning.net
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: the-tartan.org
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pitt.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: nationalityrooms.pitt.edu
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: acrisurestadium.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: ppgpaintsarena.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: primantibros.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pamelasdiner.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: eatgaucho.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: aptekapgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: morcillapittsburgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: noodleheadpgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: prantlsbakery.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: churchbrew.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pusadeesgarden.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: dianoiaseatery.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: ironbornpizza.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: driftwoodoven.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: tessaros.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: grandconcourserestaurant.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: discovertheburgh.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pittsburgh.eater.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+- domain: pittsburghmagazine.com
+  backend: requests
+  allowed_path_prefixes:
+  - /
+  rate_limit_seconds: 0.3
+max_depth: 1
+max_pages: 10000
+per_domain_cap: 180
+concurrency: 32
+timeout_seconds: 25.0
+retries: 2
+retry_backoff_seconds: 1.0
+rate_limit_seconds: 0.2
+respect_robots: true
+force_download: false
+force_parse: false
+metadata:
+  run_name: assignment_hw2_seeded_v1
+  source: sandbox/assignment_instructions.md
+  note: Depth=1 globally; event-calendar domains use selenium.

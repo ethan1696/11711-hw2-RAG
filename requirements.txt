@@ -1,0 +1,15 @@
+# Core crawling + parsing dependencies
+requests>=2.32.0
+beautifulsoup4>=4.12.0
+lxml>=5.2.0
+trafilatura>=1.10.0
+readability-lxml>=0.8.1
+pypdf>=5.0.0
+pdfplumber>=0.11.0
+selenium>=4.20.0
+PyYAML>=6.0.0
+
+# Utility
+tqdm>=4.66.0
+fasttext-numpy2
+huggingface-hub>=0.28.0

@@ -1,0 +1,36 @@
+seeds:
+  - https://www.cmu.edu/about/
+  - https://events.cmu.edu/
+
+domains:
+  - domain: cmu.edu
+    backend: requests
+    allowed_path_prefixes:
+      - /about/
+      - /news/
+    rate_limit_seconds: 0.25
+
+  - domain: events.cmu.edu
+    backend: selenium
+    # Use Selenium for depth <= 0 (seed/root pages only), then fallback to requests.
+    selenium_max_depth: 0
+    selenium_wait_selector: body
+    selenium_wait_seconds: 3.0
+    rate_limit_seconds: 1.0
+
+max_depth: 2
+max_pages: 800
+per_domain_cap: 250
+concurrency: 6
+
+timeout_seconds: 20.0
+retries: 2
+retry_backoff_seconds: 1.0
+rate_limit_seconds: 0.2
+
+respect_robots: true
+force_download: false
+force_parse: false
+
+metadata:
+  assignment: 11711-hw2-rag

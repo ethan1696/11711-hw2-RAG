@@ -1,0 +1,2 @@
+# Convenience wrapper so either file can be used.
+-r ../requirements.txt

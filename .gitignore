@@ -1,1 +1,31 @@
-sandbox
+# Keep local scratch docs out of commits.
+sandbox/
+
+# Python artifacts
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual envs
+.venv/
+venv/
+ENV/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local env and editor files
+.env
+.env.*
+.DS_Store
+
+# Runtime logs
+*.log
+logs/
+
+# Large/generated crawler outputs
+data/crawled_output_assignment/
+data/kr/
+data/raw/
