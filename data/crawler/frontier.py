@@ -23,6 +23,7 @@ class EnqueueStatus(str, Enum):
     SKIPPED_SEEN = "skipped_seen"
     SKIPPED_GLOBAL_BUDGET = "skipped_global_budget"
     SKIPPED_DOMAIN_BUDGET = "skipped_domain_budget"
+    SKIPPED_SEED_BUDGET = "skipped_seed_budget"
     SKIPPED_CLOSED = "skipped_closed"
 
 
@@ -61,6 +62,7 @@ class Frontier:
         self._seen_urls: set[str] = set()
         self._accepted_this_run = 0
         self._accepted_by_domain: dict[str, int] = {}
+        self._accepted_by_seed: dict[str, int] = {}
 
         self._enqueued_count = 0
         self._dequeued_count = 0
@@ -81,9 +83,16 @@ class Frontier:
     def seed(self, seeds: Iterable[str]) -> list[EnqueueResult]:
         """Seed frontier with depth=0 URLs."""
 
-        return self.push_many(seeds, depth=0, referrer=None)
+        return [self.push(seed, depth=0, referrer=None, seed_url=seed) for seed in seeds]
 
-    def push(self, url: str, *, depth: int, referrer: str | None = None) -> EnqueueResult:
+    def push(
+        self,
+        url: str,
+        *,
+        depth: int,
+        referrer: str | None = None,
+        seed_url: str | None = None,
+    ) -> EnqueueResult:
         """Attempt to enqueue one URL with constraints enforced."""
 
         normalized = normalize_url(url)
@@ -91,6 +100,9 @@ class Frontier:
             with self._lock:
                 self._skipped_invalid_count += 1
             return EnqueueResult(EnqueueStatus.SKIPPED_INVALID_URL)
+
+        normalized_seed = normalize_url(seed_url) if seed_url else None
+        seed_key = normalized_seed or normalized
 
         if depth > self.config.max_depth:
             with self._lock:
@@ -124,11 +136,24 @@ class Frontier:
                 self._skipped_budget_count += 1
                 return EnqueueResult(EnqueueStatus.SKIPPED_DOMAIN_BUDGET, normalized_url=normalized)
 
+            if (
+                self.config.per_seed_cap is not None
+                and self._accepted_by_seed.get(seed_key, 0) >= self.config.per_seed_cap
+            ):
+                self._skipped_budget_count += 1
+                return EnqueueResult(EnqueueStatus.SKIPPED_SEED_BUDGET, normalized_url=normalized)
+
             self._seen_urls.add(normalized)
             self._accepted_this_run += 1
             self._accepted_by_domain[domain_key] = self._accepted_by_domain.get(domain_key, 0) + 1
+            self._accepted_by_seed[seed_key] = self._accepted_by_seed.get(seed_key, 0) + 1
 
-            item = FrontierItem(url=normalized, depth=depth, referrer=referrer)
+            item = FrontierItem(
+                url=normalized,
+                depth=depth,
+                seed_url=seed_key,
+                referrer=referrer,
+            )
             self._queue.put(item)
             self._enqueued_count += 1
 
@@ -144,10 +169,14 @@ class Frontier:
         *,
         depth: int,
         referrer: str | None = None,
+        seed_url: str | None = None,
     ) -> list[EnqueueResult]:
         """Attempt to enqueue multiple URLs, preserving input order."""
 
-        return [self.push(url, depth=depth, referrer=referrer) for url in urls]
+        return [
+            self.push(url, depth=depth, referrer=referrer, seed_url=seed_url)
+            for url in urls
+        ]
 
     def pop(self, *, block: bool = True, timeout: float | None = None) -> FrontierItem | None:
         """Pop one frontier item for a worker thread.
@@ -239,6 +268,12 @@ class Frontier:
         with self._lock:
             return dict(self._accepted_by_domain)
 
+    def accepted_by_seed(self) -> dict[str, int]:
+        """Return snapshot of accepted-per-seed counts."""
+
+        with self._lock:
+            return dict(self._accepted_by_seed)
+
     def snapshot(self) -> dict[str, int | bool]:
         """Return frontier counters for logs/stats reporting."""
 
@@ -248,6 +283,7 @@ class Frontier:
                 "queue_size": self._queue.qsize(),
                 "seen_urls": len(self._seen_urls),
                 "accepted_this_run": self._accepted_this_run,
+                "accepted_seed_count": len(self._accepted_by_seed),
                 "enqueued": self._enqueued_count,
                 "dequeued": self._dequeued_count,
                 "skipped_seen": self._skipped_seen_count,

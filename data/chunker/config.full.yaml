@@ -7,7 +7,7 @@ output_dir: data/chunked_output_full
 
 # fastText language classifier (`lid.176.bin`)
 quality_model_path: null
-quality_threshold: 0.3
+quality_threshold: 0.6
 
 # Language target
 lang: en

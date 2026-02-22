@@ -73,6 +73,7 @@ class FrontierItem:
 
     url: str
     depth: int
+    seed_url: str
     referrer: str | None = None
     discovered_at: str = field(default_factory=utc_now_iso)
 

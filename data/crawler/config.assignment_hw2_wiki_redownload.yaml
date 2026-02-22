@@ -46,6 +46,7 @@ domains:
 max_depth: 1
 max_pages: 50000
 per_domain_cap: null
+per_seed_cap: 180
 concurrency: 32
 timeout_seconds: 25.0
 retries: 2
@@ -58,5 +59,4 @@ force_parse: false
 metadata:
   run_name: assignment_hw2_wikipedia_refetch_lists
   source: manual-seed-recovery
-  note: Wikipedia list-seed recovery run at depth=1 with force_download and no per-domain cap.
-
+  note: Wikipedia list-seed recovery run at depth=1 with force_download and per-seed cap.

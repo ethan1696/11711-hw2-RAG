@@ -19,6 +19,7 @@ from .constants import (
     DEFAULT_MAX_DEPTH,
     DEFAULT_MAX_PAGES,
     DEFAULT_PER_DOMAIN_CAP,
+    DEFAULT_PER_SEED_CAP,
     DEFAULT_RATE_LIMIT_SECONDS,
     DEFAULT_RESPECT_ROBOTS,
     DEFAULT_RETRIES,
@@ -166,6 +167,7 @@ class CrawlConfig:
     max_depth: int = DEFAULT_MAX_DEPTH
     max_pages: int = DEFAULT_MAX_PAGES
     per_domain_cap: int | None = DEFAULT_PER_DOMAIN_CAP
+    per_seed_cap: int | None = DEFAULT_PER_SEED_CAP
     concurrency: int = DEFAULT_CONCURRENCY
 
     timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS
@@ -195,6 +197,8 @@ class CrawlConfig:
             raise ValueError("max_pages must be > 0")
         if self.per_domain_cap is not None and self.per_domain_cap <= 0:
             raise ValueError("per_domain_cap must be > 0 when set")
+        if self.per_seed_cap is not None and self.per_seed_cap <= 0:
+            raise ValueError("per_seed_cap must be > 0 when set")
         if self.concurrency <= 0:
             raise ValueError("concurrency must be > 0")
         if self.timeout_seconds <= 0:
@@ -322,6 +326,7 @@ class CrawlConfig:
             "max_depth": self.max_depth,
             "max_pages": self.max_pages,
             "per_domain_cap": self.per_domain_cap,
+            "per_seed_cap": self.per_seed_cap,
             "concurrency": self.concurrency,
             "timeout_seconds": self.timeout_seconds,
             "retries": self.retries,
@@ -358,6 +363,7 @@ class CrawlConfig:
             max_depth=int(payload.get("max_depth", DEFAULT_MAX_DEPTH)),
             max_pages=int(payload.get("max_pages", DEFAULT_MAX_PAGES)),
             per_domain_cap=_as_int(payload.get("per_domain_cap", DEFAULT_PER_DOMAIN_CAP), "per_domain_cap"),
+            per_seed_cap=_as_int(payload.get("per_seed_cap", DEFAULT_PER_SEED_CAP), "per_seed_cap"),
             concurrency=int(payload.get("concurrency", DEFAULT_CONCURRENCY)),
             timeout_seconds=float(payload.get("timeout_seconds", DEFAULT_TIMEOUT_SECONDS)),
             retries=int(payload.get("retries", DEFAULT_RETRIES)),

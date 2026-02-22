@@ -47,6 +47,7 @@ from data.chunker.io import (
 from data.chunker.quality_filter import BlockFilterResult, QualityFilter
 from data.chunker.stats import StatsCollector
 from data.chunker.types import ChunkRecord, RejectedRecord, RejectStage, SourceDocument, TextBlock
+from tqdm import tqdm
 
 
 LOGGER = logging.getLogger(__name__)
@@ -90,6 +91,24 @@ def _preview_text(text: str, max_chars: int = 240) -> str:
 
 def _normalize_for_dedup(text: str) -> str:
     return " ".join((text or "").split()).strip().lower()
+
+
+def _estimate_total_docs(input_path: str | Path, *, max_docs: int | None) -> int | None:
+    """Estimate total docs for progress bar; exact for JSONL, unknown otherwise."""
+
+    if max_docs is not None:
+        return max_docs
+
+    path = Path(input_path)
+    if path.suffix.lower() != ".jsonl":
+        return None
+
+    count = 0
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            if line.strip():
+                count += 1
+    return count
 
 
 def _build_chunk_record(
@@ -189,59 +208,71 @@ def run_pipeline(
     chunks: list[ChunkRecord] = []
     rejected: list[RejectedRecord] = []
     seen_chunk_hashes: set[str] = set()
+    total_docs = _estimate_total_docs(config.input_path, max_docs=max_docs)
+    docs_iter = iter_source_documents(config.input_path, skip_invalid=skip_invalid)
+    progress = tqdm(total=total_docs, desc="Chunking docs", unit="doc")
+    try:
+        for index, doc in enumerate(docs_iter):
+            if max_docs is not None and index >= max_docs:
+                break
 
-    for index, doc in enumerate(iter_source_documents(config.input_path, skip_invalid=skip_invalid)):
-        if max_docs is not None and index >= max_docs:
-            break
+            stats.record_doc_input(doc)
+            blocks = split_document(doc, config=split_cfg)
+            for block in blocks:
+                stats.record_block_input(block)
 
-        stats.record_doc_input(doc)
-        blocks = split_document(doc, config=split_cfg)
-        for block in blocks:
-            stats.record_block_input(block)
-
-        emitted_chunks = 0
-        for block in blocks:
-            result = quality_filter.evaluate_block(block)
-            if not result.passed:
-                row = _build_block_rejection(doc=doc, block=block, result=result)
-                rejected.append(row)
-                stats.record_rejected_row(row)
-                continue
-
-            stats.record_block_kept(block)
-            chunk_text = block.text.strip()
-            if not chunk_text:
-                continue
-
-            if config.dedup:
-                key = hashlib.sha1(_normalize_for_dedup(chunk_text).encode("utf-8")).hexdigest()
-                if key in seen_chunk_hashes:
-                    row = _build_chunk_rejection(
-                        doc=doc,
-                        reason="duplicate_chunk_text",
-                        chunk_text=chunk_text,
-                        chunk_index=emitted_chunks,
-                        block_ids=[block.block_id],
-                    )
+            emitted_chunks = 0
+            for block in blocks:
+                result = quality_filter.evaluate_block(block)
+                if not result.passed:
+                    row = _build_block_rejection(doc=doc, block=block, result=result)
                     rejected.append(row)
                     stats.record_rejected_row(row)
-                    stats.record_chunk_deduped()
                     continue
-                seen_chunk_hashes.add(key)
 
-            chunk = _build_chunk_record(
-                doc=doc,
-                chunk_index=emitted_chunks,
-                text=chunk_text,
-                block_ids=[block.block_id],
-                token_count_estimate=block.word_count,
+                stats.record_block_kept(block)
+                chunk_text = block.text.strip()
+                if not chunk_text:
+                    continue
+
+                if config.dedup:
+                    key = hashlib.sha1(_normalize_for_dedup(chunk_text).encode("utf-8")).hexdigest()
+                    if key in seen_chunk_hashes:
+                        row = _build_chunk_rejection(
+                            doc=doc,
+                            reason="duplicate_chunk_text",
+                            chunk_text=chunk_text,
+                            chunk_index=emitted_chunks,
+                            block_ids=[block.block_id],
+                        )
+                        rejected.append(row)
+                        stats.record_rejected_row(row)
+                        stats.record_chunk_deduped()
+                        continue
+                    seen_chunk_hashes.add(key)
+
+                chunk = _build_chunk_record(
+                    doc=doc,
+                    chunk_index=emitted_chunks,
+                    text=chunk_text,
+                    block_ids=[block.block_id],
+                    token_count_estimate=block.word_count,
+                )
+                chunks.append(chunk)
+                stats.record_chunk_output(chunk)
+                emitted_chunks += 1
+
+            if emitted_chunks > 0:
+                stats.record_doc_kept(doc)
+
+            progress.update(1)
+            progress.set_postfix(
+                chunks=len(chunks),
+                rejected=len(rejected),
+                refresh=False,
             )
-            chunks.append(chunk)
-            stats.record_chunk_output(chunk)
-            emitted_chunks += 1
-
-        if emitted_chunks > 0:
-            stats.record_doc_kept(doc)
+    finally:
+        progress.close()
 
     stats.finish()
     stats_payload = stats.to_json()

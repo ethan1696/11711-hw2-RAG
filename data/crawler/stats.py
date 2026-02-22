@@ -70,6 +70,7 @@ class StatsCollector:
             if status in {
                 EnqueueStatus.SKIPPED_GLOBAL_BUDGET,
                 EnqueueStatus.SKIPPED_DOMAIN_BUDGET,
+                EnqueueStatus.SKIPPED_SEED_BUDGET,
             }:
                 self._core.frontier_skipped_budget += 1
                 return

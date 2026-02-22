@@ -21,6 +21,7 @@ domains:
 max_depth: 2
 max_pages: 800
 per_domain_cap: 250
+per_seed_cap: null
 concurrency: 6
 
 timeout_seconds: 20.0

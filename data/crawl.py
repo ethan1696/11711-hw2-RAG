@@ -66,6 +66,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Use 0 or negative to disable per-domain cap.",
     )
+    parser.add_argument(
+        "--per_seed_cap",
+        type=int,
+        default=None,
+        help="Use 0 or negative to disable per-seed cap.",
+    )
     parser.add_argument("--concurrency", type=int, default=None)
 
     parser.add_argument("--timeout_seconds", type=float, default=None)
@@ -164,6 +170,8 @@ def build_config(args: argparse.Namespace) -> CrawlConfig:
         payload["max_pages"] = args.max_pages
     if args.per_domain_cap is not None:
         payload["per_domain_cap"] = None if args.per_domain_cap <= 0 else args.per_domain_cap
+    if args.per_seed_cap is not None:
+        payload["per_seed_cap"] = None if args.per_seed_cap <= 0 else args.per_seed_cap
     if args.concurrency is not None:
         payload["concurrency"] = args.concurrency
 

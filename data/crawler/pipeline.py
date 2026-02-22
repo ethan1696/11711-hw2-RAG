@@ -146,10 +146,20 @@ class Pipeline:
                     continue
 
                 if mode == PipelineMode.FETCH_ONLY:
-                    self._maybe_expand_links_fetch_only(frontier, item.depth, fetch_result)
+                    self._maybe_expand_links_fetch_only(
+                        frontier,
+                        item.depth,
+                        fetch_result,
+                        seed_url=item.seed_url,
+                    )
                     continue
 
-                self._handle_parse_and_store(frontier, item.depth, fetch_result)
+                self._handle_parse_and_store(
+                    frontier,
+                    item.depth,
+                    fetch_result,
+                    seed_url=item.seed_url,
+                )
             except Exception as exc:
                 self._record_exception_error(CrawlStage.STORE, item.url, exc)
             finally:
@@ -169,7 +179,12 @@ class Pipeline:
                 self.stats.increment("parse_only_missing_raw")
                 continue
 
-            self._handle_parse_and_store(None, depth=0, fetch_result=fetch_result)
+            self._handle_parse_and_store(
+                None,
+                depth=0,
+                fetch_result=fetch_result,
+                seed_url=url,
+            )
 
     def _collect_parse_only_urls(self) -> list[str]:
         urls: set[str] = set()
@@ -260,6 +275,8 @@ class Pipeline:
         frontier: Frontier | None,
         depth: int,
         fetch_result: FetchResult,
+        *,
+        seed_url: str,
     ) -> None:
         parse_result = self._parse_fetch_result(fetch_result)
         self.stats.record_parse(parse_result)
@@ -298,6 +315,7 @@ class Pipeline:
             parse_result.out_links,
             depth=depth + 1,
             referrer=fetch_result.final_url or fetch_result.requested_url,
+            seed_url=seed_url,
         )
         self.stats.record_enqueue_many(enqueue_results)
         self._persist_accepted_urls(enqueue_results)
@@ -366,6 +384,8 @@ class Pipeline:
         frontier: Frontier,
         depth: int,
         fetch_result: FetchResult,
+        *,
+        seed_url: str,
     ) -> None:
         if depth >= self.config.max_depth:
             return
@@ -388,7 +408,12 @@ class Pipeline:
         if not links:
             return
 
-        enqueue_results = frontier.push_many(links, depth=depth + 1, referrer=base_url)
+        enqueue_results = frontier.push_many(
+            links,
+            depth=depth + 1,
+            referrer=base_url,
+            seed_url=seed_url,
+        )
         self.stats.record_enqueue_many(enqueue_results)
         self._persist_accepted_urls(enqueue_results)
 

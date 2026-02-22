@@ -3,7 +3,6 @@ seeds:
 - https://en.wikipedia.org/wiki/History_of_Pittsburgh
 - https://www.pittsburghpa.gov/Home
 - https://pittsburghpa.gov/finance/tax-forms
-- https://www.pittsburghpa.gov/files/assets/city/v/4/omb/documents/operating-budgets/2025-operating-budget.pdf
 - https://www.britannica.com/place/Pittsburgh
 - https://www.visitpittsburgh.com/
 - https://www.cmu.edu/about/
@@ -587,8 +586,9 @@ domains:
   - /
   rate_limit_seconds: 0.3
 max_depth: 1
-max_pages: 10000
-per_domain_cap: 3000
+max_pages: 100000
+per_domain_cap: null
+per_seed_cap: 200
 concurrency: 32
 timeout_seconds: 25.0
 retries: 2
