@@ -88,12 +88,9 @@ class QualityFilter:
         *,
         model: Any | None = None,
     ) -> "QualityFilter":
-        threshold = chunker_config.quality_threshold
-        if threshold is None:
-            threshold = chunker_config.lang_threshold if chunker_config.lang_threshold is not None else 0.5
-
+        threshold = chunker_config.quality_threshold if chunker_config.quality_threshold is not None else 0.5
         target_lang = chunker_config.lang or "en"
-        model_path = chunker_config.quality_model_path or chunker_config.lang_model_path
+        model_path = chunker_config.quality_model_path
         config = QualityFilterConfig(
             quality_model_path=model_path,
             keep_labels=(target_lang,),
@@ -232,4 +229,3 @@ __all__ = [
     "QualityFilter",
     "QualityFilterConfig",
 ]
-

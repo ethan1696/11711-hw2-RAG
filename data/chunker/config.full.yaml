@@ -7,22 +7,14 @@ output_dir: data/chunked_output_full
 
 # fastText language classifier (`lid.176.bin`)
 quality_model_path: null
-quality_threshold: 0.50
+quality_threshold: 0.3
 
 # Language target
-lang_model_path: null
 lang: en
-lang_threshold: 0.50
 
-# Splitter minimums
-min_block_words: 8
-min_doc_words_after_filter: 30
-
-# Legacy fields retained for schema compatibility
-chunk_max_tokens: 220
-chunk_overlap_tokens: 40
-keep_list_blocks: true
-max_list_lines: 20
+# Splitter minimum
+min_block_words: 20
+max_block_words: 80
 
 # Dedup identical block/chunk text across the run
 dedup: true
@@ -30,4 +22,3 @@ dedup: true
 metadata:
   run_name: chunker-full-lid176
   note: full assignment run using fastText language ID
-

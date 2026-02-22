@@ -139,6 +139,36 @@ seeds:
 - https://pittsburgh.eater.com/
 - https://www.pittsburghmagazine.com/
 - https://www.pghcitypaper.com/
+- https://en.wikipedia.org/wiki/List_of_baseball_parks_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_tallest_buildings_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_colleges_and_universities_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_corporations_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_Duquesne_Dukes_football_seasons
+- https://en.wikipedia.org/wiki/List_of_fiction_set_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_films_shot_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_City_of_Pittsburgh_historic_designations
+- https://en.wikipedia.org/wiki/List_of_Pittsburgh_History_and_Landmarks_Foundation_Historic_Landmarks
+- https://en.wikipedia.org/wiki/List_of_mayors_of_Pittsburgh
+- https://en.wikipedia.org/wiki/National_Register_of_Historic_Places_listings_in_Pittsburgh,_Pennsylvania
+- https://en.wikipedia.org/wiki/List_of_Pittsburgh_neighborhoods
+- https://en.wikipedia.org/wiki/Nicknames_of_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_parks_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_Pittsburgh_Penguins_minor_league_affiliates
+- https://en.wikipedia.org/wiki/List_of_people_from_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_Pittsburgh_performing_arts_companies_and_venues
+- https://en.wikipedia.org/wiki/List_of_bridges_of_Pittsburgh
+- https://en.wikipedia.org/wiki/Pittsburgh_Police_Chief
+- https://en.wikipedia.org/wiki/List_of_Pittsburgh_Power_seasons
+- https://en.wikipedia.org/wiki/List_of_inclines_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_public_schools_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_Tampa_Bay_Storm_seasons
+- https://en.wikipedia.org/wiki/List_of_television_shows_shot_in_Pittsburgh
+- https://en.wikipedia.org/wiki/Timeline_of_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_tunnels_in_Pittsburgh
+- https://en.wikipedia.org/wiki/List_of_University_of_Pittsburgh_alumni
+- https://en.wikipedia.org/wiki/List_of_University_of_Pittsburgh_buildings
+- https://en.wikipedia.org/wiki/List_of_University_of_Pittsburgh_faculty
+- https://en.wikipedia.org/wiki/University_of_Pittsburgh_School_of_Law_alumni
 domains:
 - domain: events.cmu.edu
   backend: selenium
@@ -558,7 +588,7 @@ domains:
   rate_limit_seconds: 0.3
 max_depth: 1
 max_pages: 10000
-per_domain_cap: 180
+per_domain_cap: 3000
 concurrency: 32
 timeout_seconds: 25.0
 retries: 2

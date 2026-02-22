@@ -145,34 +145,6 @@ class TextBlock:
 
 
 @dataclass(frozen=True, slots=True)
-class BlockQuality:
-    """Quality-filter decision and scores for one block."""
-
-    doc_id: str
-    block_id: int
-    decision: FilterDecision
-    reason: str | None = None
-    lang_label: str | None = None
-    lang_score: float | None = None
-    quality_label: str | None = None
-    quality_score: float | None = None
-    metadata: dict[str, JSONValue] = field(default_factory=dict)
-
-    def to_json(self) -> JSONDict:
-        return {
-            "doc_id": self.doc_id,
-            "block_id": self.block_id,
-            "decision": self.decision.value,
-            "reason": self.reason,
-            "lang_label": self.lang_label,
-            "lang_score": self.lang_score,
-            "quality_label": self.quality_label,
-            "quality_score": self.quality_score,
-            "metadata": self.metadata,
-        }
-
-
-@dataclass(frozen=True, slots=True)
 class ChunkRecord:
     """One output chunk row written to `chunks.jsonl`."""
 
@@ -309,7 +281,6 @@ def _as_optional_str(value: Any) -> str | None:
 
 
 __all__ = [
-    "BlockQuality",
     "ChunkRecord",
     "ChunkerStats",
     "FilterDecision",

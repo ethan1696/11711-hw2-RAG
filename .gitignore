@@ -27,5 +27,6 @@ logs/
 
 # Large/generated crawler outputs
 data/crawled_output_assignment/
+data/chunked_output_full/
 data/kr/
 data/raw/

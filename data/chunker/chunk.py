@@ -62,8 +62,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--split_max_block_words",
         type=int,
-        default=150,
-        help="Maximum words per sentence-packed block.",
+        default=None,
+        help="Override maximum words per sentence-packed block.",
     )
     parser.add_argument(
         "--log_level",
@@ -168,14 +168,20 @@ def run_pipeline(
     *,
     skip_invalid: bool = True,
     max_docs: int | None = None,
-    split_max_block_words: int = 150,
+    split_max_block_words: int | None = None,
 ) -> dict[str, object]:
     """Run chunking pipeline and write outputs."""
 
     output_paths = ensure_output_paths(config.output_path)
+    effective_max_block_words = (
+        split_max_block_words if split_max_block_words is not None else config.max_block_words
+    )
+    if effective_max_block_words <= 0:
+        raise ValueError("max_block_words must be > 0")
 
     split_cfg = BlockSplitConfig(
-        max_block_words=split_max_block_words,
+        min_block_words=config.min_block_words,
+        max_block_words=effective_max_block_words,
     )
     quality_filter = QualityFilter.from_chunker_config(config)
     stats = StatsCollector()

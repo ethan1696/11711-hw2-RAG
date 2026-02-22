@@ -25,15 +25,6 @@ def _as_float(value: Any, key: str) -> float | None:
         raise ValueError(f"Invalid float for '{key}': {value!r}") from exc
 
 
-def _as_int(value: Any, key: str) -> int | None:
-    if value is None:
-        return None
-    try:
-        return int(value)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(f"Invalid int for '{key}': {value!r}") from exc
-
-
 def _as_bool(value: Any, key: str) -> bool:
     if isinstance(value, bool):
         return value
@@ -54,21 +45,13 @@ class ChunkerConfig:
     input_json: str | None = None
     output_dir: str | None = None
 
-    lang_model_path: str | None = None
     lang: str | None = "en"
-    lang_threshold: float | None = 0.5
 
     quality_model_path: str | None = None
     quality_threshold: float | None = 0.5
 
     min_block_words: int = 8
-    min_doc_words_after_filter: int = 30
-
-    chunk_max_tokens: int = 220
-    chunk_overlap_tokens: int = 40
-
-    keep_list_blocks: bool = True
-    max_list_lines: int = 20
+    max_block_words: int = 150
     dedup: bool = True
 
     metadata: dict[str, JSONValue] = field(default_factory=dict)
@@ -76,29 +59,16 @@ class ChunkerConfig:
     def __post_init__(self) -> None:
         self.input_json = _as_str_or_none(self.input_json)
         self.output_dir = _as_str_or_none(self.output_dir)
-        self.lang_model_path = _as_str_or_none(self.lang_model_path)
         self.lang = _as_str_or_none(self.lang)
         self.quality_model_path = _as_str_or_none(self.quality_model_path)
 
-        if self.lang_threshold is not None and not (0.0 <= self.lang_threshold <= 1.0):
-            raise ValueError("lang_threshold must be between 0 and 1 when set")
         if self.quality_threshold is not None and not (0.0 <= self.quality_threshold <= 1.0):
             raise ValueError("quality_threshold must be between 0 and 1 when set")
 
         if self.min_block_words < 0:
             raise ValueError("min_block_words must be >= 0")
-        if self.min_doc_words_after_filter < 0:
-            raise ValueError("min_doc_words_after_filter must be >= 0")
-
-        if self.chunk_max_tokens <= 0:
-            raise ValueError("chunk_max_tokens must be > 0")
-        if self.chunk_overlap_tokens < 0:
-            raise ValueError("chunk_overlap_tokens must be >= 0")
-        if self.chunk_overlap_tokens >= self.chunk_max_tokens:
-            raise ValueError("chunk_overlap_tokens must be < chunk_max_tokens")
-
-        if self.max_list_lines <= 0:
-            raise ValueError("max_list_lines must be > 0")
+        if self.max_block_words <= 0:
+            raise ValueError("max_block_words must be > 0")
 
     @property
     def input_path(self) -> Path:
@@ -135,17 +105,11 @@ class ChunkerConfig:
         return {
             "input_json": self.input_json,
             "output_dir": self.output_dir,
-            "lang_model_path": self.lang_model_path,
             "lang": self.lang,
-            "lang_threshold": self.lang_threshold,
             "quality_model_path": self.quality_model_path,
             "quality_threshold": self.quality_threshold,
             "min_block_words": self.min_block_words,
-            "min_doc_words_after_filter": self.min_doc_words_after_filter,
-            "chunk_max_tokens": self.chunk_max_tokens,
-            "chunk_overlap_tokens": self.chunk_overlap_tokens,
-            "keep_list_blocks": self.keep_list_blocks,
-            "max_list_lines": self.max_list_lines,
+            "max_block_words": self.max_block_words,
             "dedup": self.dedup,
             "metadata": self.metadata,
         }
@@ -155,20 +119,14 @@ class ChunkerConfig:
         return cls(
             input_json=_as_str_or_none(payload.get("input_json")),
             output_dir=_as_str_or_none(payload.get("output_dir")),
-            lang_model_path=_as_str_or_none(payload.get("lang_model_path")),
             lang=_as_str_or_none(payload.get("lang")),
-            lang_threshold=_as_float(payload.get("lang_threshold", 0.5), "lang_threshold"),
             quality_model_path=_as_str_or_none(payload.get("quality_model_path")),
             quality_threshold=_as_float(
                 payload.get("quality_threshold", 0.5),
                 "quality_threshold",
             ),
             min_block_words=int(payload.get("min_block_words", 8)),
-            min_doc_words_after_filter=int(payload.get("min_doc_words_after_filter", 30)),
-            chunk_max_tokens=int(payload.get("chunk_max_tokens", 220)),
-            chunk_overlap_tokens=int(payload.get("chunk_overlap_tokens", 40)),
-            keep_list_blocks=_as_bool(payload.get("keep_list_blocks", True), "keep_list_blocks"),
-            max_list_lines=int(payload.get("max_list_lines", 20)),
+            max_block_words=int(payload.get("max_block_words", 150)),
             dedup=_as_bool(payload.get("dedup", True), "dedup"),
             metadata=dict(payload.get("metadata", {})),
         )
