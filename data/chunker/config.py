@@ -59,7 +59,7 @@ class ChunkerConfig:
     lang_threshold: float | None = 0.5
 
     quality_model_path: str | None = None
-    quality_threshold: float | None = 0.0
+    quality_threshold: float | None = 0.5
 
     min_block_words: int = 8
     min_doc_words_after_filter: int = 30
@@ -160,7 +160,7 @@ class ChunkerConfig:
             lang_threshold=_as_float(payload.get("lang_threshold", 0.5), "lang_threshold"),
             quality_model_path=_as_str_or_none(payload.get("quality_model_path")),
             quality_threshold=_as_float(
-                payload.get("quality_threshold", 0.0),
+                payload.get("quality_threshold", 0.5),
                 "quality_threshold",
             ),
             min_block_words=int(payload.get("min_block_words", 8)),

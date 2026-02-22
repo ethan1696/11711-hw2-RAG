@@ -1,4 +1,4 @@
-"""Split source document text into cleaned block candidates."""
+"""Split source document text into sentence-packed blocks."""
 
 from __future__ import annotations
 
@@ -9,41 +9,27 @@ from typing import Iterable, Iterator
 from .types import SourceDocument, TextBlock
 
 
-BLANK_LINE_SPLIT_RE = re.compile(r"\n\s*\n+")
-INLINE_SPACE_RE = re.compile(r"[ \t\f\v]+")
-LIST_LINE_RE = re.compile(r"^\s*(?:[-*+•]\s+|(?:\d+|[A-Za-z])[.)]\s+)")
+WHITESPACE_RE = re.compile(r"\s+")
 
 
 @dataclass(frozen=True, slots=True)
 class BlockSplitConfig:
-    """Configuration for basic text-to-block splitting."""
+    """Configuration for sentence-based block splitting."""
 
-    min_block_words: int = 8
-    min_block_chars: int = 40
-    merge_separator: str = "\n\n"
-    preserve_list_newlines: bool = True
+    min_block_words: int = 0
+    max_block_words: int = 150
+    min_block_chars: int = 0
+    sentence_boundary_pattern: str = r"(?<=[.!?])\s+"
 
     def __post_init__(self) -> None:
         if self.min_block_words < 0:
             raise ValueError("min_block_words must be >= 0")
+        if self.max_block_words <= 0:
+            raise ValueError("max_block_words must be > 0")
         if self.min_block_chars < 0:
             raise ValueError("min_block_chars must be >= 0")
-        if not self.merge_separator:
-            raise ValueError("merge_separator cannot be empty")
-
-
-@dataclass(slots=True)
-class _CandidateBlock:
-    text: str
-    raw_indices: list[int]
-
-    @property
-    def char_count(self) -> int:
-        return len(self.text)
-
-    @property
-    def word_count(self) -> int:
-        return len(self.text.split())
+        if not self.sentence_boundary_pattern:
+            raise ValueError("sentence_boundary_pattern cannot be empty")
 
 
 def split_document(
@@ -51,36 +37,26 @@ def split_document(
     *,
     config: BlockSplitConfig | None = None,
 ) -> list[TextBlock]:
-    """Split one source document into normalized blocks."""
+    """Split one source document into sentence-packed blocks."""
 
     cfg = config or BlockSplitConfig()
-    candidates = _split_text_to_candidates(
-        doc.text,
-        preserve_list_newlines=cfg.preserve_list_newlines,
-    )
-    merged = _merge_tiny_candidates(
-        candidates,
-        min_block_words=cfg.min_block_words,
-        min_block_chars=cfg.min_block_chars,
-        separator=cfg.merge_separator,
-    )
+    block_texts = split_text(doc.text, config=cfg)
 
     blocks: list[TextBlock] = []
-    for block_id, candidate in enumerate(merged):
-        text = candidate.text.strip()
+    for block_id, text in enumerate(block_texts):
+        text = text.strip()
         if not text:
             continue
+        word_count = len(text.split())
+        char_count = len(text)
         blocks.append(
             TextBlock(
                 doc_id=doc.doc_id,
                 block_id=block_id,
                 text=text,
                 metadata={
-                    "raw_block_indices": candidate.raw_indices,
-                    "raw_block_count": len(candidate.raw_indices),
-                    "word_count": len(text.split()),
-                    "char_count": len(text),
-                    "list_like": _looks_like_list_block(text),
+                    "word_count": word_count,
+                    "char_count": char_count,
                 },
             )
         )
@@ -104,134 +80,96 @@ def split_text(
     *,
     config: BlockSplitConfig | None = None,
 ) -> list[str]:
-    """Split raw text and return cleaned block strings (without metadata)."""
+    """Split raw text into sentence-packed block strings."""
 
     cfg = config or BlockSplitConfig()
-    candidates = _split_text_to_candidates(
-        text,
-        preserve_list_newlines=cfg.preserve_list_newlines,
-    )
-    merged = _merge_tiny_candidates(
-        candidates,
-        min_block_words=cfg.min_block_words,
-        min_block_chars=cfg.min_block_chars,
-        separator=cfg.merge_separator,
-    )
-    return [candidate.text for candidate in merged if candidate.text.strip()]
-
-
-def _split_text_to_candidates(
-    text: str,
-    *,
-    preserve_list_newlines: bool,
-) -> list[_CandidateBlock]:
     normalized = _normalize_doc_text(text)
     if not normalized:
         return []
 
-    raw_parts = BLANK_LINE_SPLIT_RE.split(normalized)
-    candidates: list[_CandidateBlock] = []
-
-    for raw_index, raw_part in enumerate(raw_parts):
-        cleaned = _clean_raw_block(raw_part, preserve_list_newlines=preserve_list_newlines)
-        if not cleaned:
-            continue
-        candidates.append(_CandidateBlock(text=cleaned, raw_indices=[raw_index]))
-
-    return candidates
+    sentence_boundary_re = re.compile(cfg.sentence_boundary_pattern)
+    sentences = _split_sentences(normalized, boundary_re=sentence_boundary_re)
+    packed = _pack_sentences(sentences, max_block_words=cfg.max_block_words)
+    return _apply_minimums(
+        packed,
+        min_block_words=cfg.min_block_words,
+        min_block_chars=cfg.min_block_chars,
+    )
 
 
 def _normalize_doc_text(text: str) -> str:
     value = str(text or "")
     value = value.replace("\r\n", "\n").replace("\r", "\n")
     value = value.replace("\xa0", " ")
-    value = value.strip()
-    return value
+    value = WHITESPACE_RE.sub(" ", value)
+    return value.strip()
 
 
-def _clean_raw_block(raw_block: str, *, preserve_list_newlines: bool) -> str:
-    lines = [INLINE_SPACE_RE.sub(" ", line).strip() for line in raw_block.split("\n")]
-    lines = [line for line in lines if line]
-    if not lines:
-        return ""
-
-    if preserve_list_newlines and _looks_like_list_lines(lines):
-        return "\n".join(lines).strip()
-
-    return " ".join(lines).strip()
+def _split_sentences(text: str, *, boundary_re: re.Pattern[str]) -> list[str]:
+    parts = [part.strip() for part in boundary_re.split(text) if part.strip()]
+    return parts
 
 
-def _looks_like_list_lines(lines: list[str]) -> bool:
-    if len(lines) < 2:
-        return False
+def _pack_sentences(sentences: list[str], *, max_block_words: int) -> list[str]:
+    blocks: list[str] = []
+    current_sentences: list[str] = []
+    current_words = 0
 
-    list_marked = sum(1 for line in lines if LIST_LINE_RE.match(line))
-    if list_marked >= 2:
-        return True
+    for sentence in sentences:
+        sentence_words = sentence.split()
+        sentence_word_count = len(sentence_words)
+        if sentence_word_count == 0:
+            continue
 
-    if any(line.startswith("|") and line.endswith("|") for line in lines):
-        return True
+        if sentence_word_count > max_block_words:
+            if current_sentences:
+                blocks.append(" ".join(current_sentences).strip())
+                current_sentences = []
+                current_words = 0
+            blocks.extend(_split_long_sentence(sentence_words, max_block_words=max_block_words))
+            continue
 
-    return list_marked >= 1 and len(lines) <= 4
+        if current_sentences and (current_words + sentence_word_count > max_block_words):
+            blocks.append(" ".join(current_sentences).strip())
+            current_sentences = [sentence]
+            current_words = sentence_word_count
+            continue
+
+        current_sentences.append(sentence)
+        current_words += sentence_word_count
+
+    if current_sentences:
+        blocks.append(" ".join(current_sentences).strip())
+
+    return [block for block in blocks if block]
 
 
-def _looks_like_list_block(text: str) -> bool:
-    lines = [line.strip() for line in text.split("\n") if line.strip()]
-    return _looks_like_list_lines(lines)
+def _split_long_sentence(words: list[str], *, max_block_words: int) -> list[str]:
+    chunks: list[str] = []
+    for start in range(0, len(words), max_block_words):
+        piece = " ".join(words[start : start + max_block_words]).strip()
+        if piece:
+            chunks.append(piece)
+    return chunks
 
 
-def _merge_tiny_candidates(
-    candidates: list[_CandidateBlock],
+def _apply_minimums(
+    blocks: list[str],
     *,
     min_block_words: int,
     min_block_chars: int,
-    separator: str,
-) -> list[_CandidateBlock]:
-    if not candidates:
-        return []
+) -> list[str]:
+    if min_block_words <= 0 and min_block_chars <= 0:
+        return blocks
 
-    merged: list[_CandidateBlock] = []
-    carry: _CandidateBlock | None = None
-
-    for candidate in candidates:
-        if _is_tiny(candidate, min_block_words=min_block_words, min_block_chars=min_block_chars):
-            carry = _merge_two(carry, candidate, separator=separator) if carry else candidate
+    filtered: list[str] = []
+    for block in blocks:
+        if min_block_words > 0 and len(block.split()) < min_block_words:
             continue
-
-        if carry is not None:
-            candidate = _merge_two(carry, candidate, separator=separator)
-            carry = None
-
-        merged.append(candidate)
-
-    if carry is not None:
-        if merged:
-            merged[-1] = _merge_two(merged[-1], carry, separator=separator)
-        else:
-            merged.append(carry)
-
-    return merged
-
-
-def _is_tiny(candidate: _CandidateBlock, *, min_block_words: int, min_block_chars: int) -> bool:
-    words_too_small = min_block_words > 0 and candidate.word_count < min_block_words
-    chars_too_small = min_block_chars > 0 and candidate.char_count < min_block_chars
-    return words_too_small or chars_too_small
-
-
-def _merge_two(left: _CandidateBlock, right: _CandidateBlock, *, separator: str) -> _CandidateBlock:
-    merged_text = left.text.strip()
-    right_text = right.text.strip()
-
-    if merged_text and right_text:
-        merged_text = f"{merged_text}{separator}{right_text}"
-    elif right_text:
-        merged_text = right_text
-
-    return _CandidateBlock(
-        text=merged_text,
-        raw_indices=[*left.raw_indices, *right.raw_indices],
-    )
+        if min_block_chars > 0 and len(block) < min_block_chars:
+            continue
+        filtered.append(block)
+    return filtered
 
 
 __all__ = [

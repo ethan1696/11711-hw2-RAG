@@ -219,6 +219,7 @@ class RejectedRecord:
     chunk_id: str | None = None
     url: str | None = None
     source_domain: str | None = None
+    text: str | None = None
     text_preview: str | None = None
     metadata: dict[str, JSONValue] = field(default_factory=dict)
     created_at: str = field(default_factory=utc_now_iso)
@@ -232,6 +233,7 @@ class RejectedRecord:
             "chunk_id": self.chunk_id,
             "url": self.url,
             "source_domain": self.source_domain,
+            "text": self.text,
             "text_preview": self.text_preview,
             "metadata": self.metadata,
             "created_at": self.created_at,

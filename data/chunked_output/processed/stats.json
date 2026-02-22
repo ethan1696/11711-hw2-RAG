@@ -1,0 +1,311 @@
+{
+  "blocks_input": 1181,
+  "blocks_kept": 1157,
+  "blocks_rejected": 24,
+  "chunks_by_domain": {
+    "bananasplitfest.com": 3,
+    "britannica.com": 14,
+    "carnegiemuseums.org": 112,
+    "cmu.edu": 3,
+    "en.wikipedia.org": 531,
+    "heinzhistorycenter.org": 2,
+    "mlb.com": 1,
+    "my.carnegiemuseums.org": 1,
+    "pghtacofest.com": 18,
+    "picklesburgh.com": 6,
+    "pittsburgh.events": 1,
+    "pittsburghopera.org": 4,
+    "pittsburghpa.gov": 447,
+    "pittsburghsymphony.org": 3,
+    "thefrickpittsburgh.org": 1,
+    "trustarts.org": 2,
+    "visitpittsburgh.com": 5
+  },
+  "chunks_deduped": 3,
+  "chunks_output": 1154,
+  "chunks_rejected": 3,
+  "config": {
+    "chunk_max_tokens": 220,
+    "chunk_overlap_tokens": 40,
+    "dedup": true,
+    "input_json": "data/crawled_output_assignment/parsed/docs.jsonl",
+    "keep_list_blocks": true,
+    "lang": "en",
+    "lang_model_path": null,
+    "lang_threshold": 0.5,
+    "max_list_lines": 20,
+    "metadata": {
+      "note": "tune language threshold and split size here",
+      "run_name": "chunker-default"
+    },
+    "min_block_words": 8,
+    "min_doc_words_after_filter": 30,
+    "output_dir": "data/chunked_output",
+    "quality_model_path": null,
+    "quality_threshold": 0.5
+  },
+  "docs_by_domain": {
+    "bananasplitfest.com": 1,
+    "britannica.com": 1,
+    "carnegiemuseums.org": 19,
+    "cmu.edu": 1,
+    "en.wikipedia.org": 3,
+    "heinzhistorycenter.org": 1,
+    "mlb.com": 1,
+    "my.carnegiemuseums.org": 1,
+    "pghtacofest.com": 5,
+    "picklesburgh.com": 3,
+    "pittsburgh.events": 1,
+    "pittsburghopera.org": 3,
+    "pittsburghpa.gov": 3,
+    "pittsburghsymphony.org": 1,
+    "steelers.com": 1,
+    "thefrickpittsburgh.org": 1,
+    "trustarts.org": 1,
+    "visitpittsburgh.com": 3
+  },
+  "docs_input": 50,
+  "docs_kept": 49,
+  "docs_rejected": 0,
+  "domains": {
+    "chunks_by_domain": {
+      "bananasplitfest.com": 3,
+      "britannica.com": 14,
+      "carnegiemuseums.org": 112,
+      "cmu.edu": 3,
+      "en.wikipedia.org": 531,
+      "heinzhistorycenter.org": 2,
+      "mlb.com": 1,
+      "my.carnegiemuseums.org": 1,
+      "pghtacofest.com": 18,
+      "picklesburgh.com": 6,
+      "pittsburgh.events": 1,
+      "pittsburghopera.org": 4,
+      "pittsburghpa.gov": 447,
+      "pittsburghsymphony.org": 3,
+      "thefrickpittsburgh.org": 1,
+      "trustarts.org": 2,
+      "visitpittsburgh.com": 5
+    },
+    "docs_by_domain": {
+      "bananasplitfest.com": 1,
+      "britannica.com": 1,
+      "carnegiemuseums.org": 19,
+      "cmu.edu": 1,
+      "en.wikipedia.org": 3,
+      "heinzhistorycenter.org": 1,
+      "mlb.com": 1,
+      "my.carnegiemuseums.org": 1,
+      "pghtacofest.com": 5,
+      "picklesburgh.com": 3,
+      "pittsburgh.events": 1,
+      "pittsburghopera.org": 3,
+      "pittsburghpa.gov": 3,
+      "pittsburghsymphony.org": 1,
+      "steelers.com": 1,
+      "thefrickpittsburgh.org": 1,
+      "trustarts.org": 1,
+      "visitpittsburgh.com": 3
+    }
+  },
+  "duration_seconds": 1.0,
+  "finished_at": "2026-02-22T06:18:10+00:00",
+  "histograms": {
+    "block_words_input": {
+      "<= 120": 163,
+      "<= 150": 870,
+      "<= 20": 34,
+      "<= 40": 41,
+      "<= 80": 73
+    },
+    "chunk_words_output": {
+      "<= 100": 103,
+      "<= 150": 961,
+      "<= 50": 90
+    },
+    "doc_words_input": {
+      "<= 100": 10,
+      "<= 1000": 5,
+      "<= 2000": 5,
+      "<= 250": 18,
+      "<= 4000": 2,
+      "<= 500": 7,
+      "> 8000": 3
+    }
+  },
+  "lengths": {
+    "blocks_input_chars": {
+      "avg": 793.6316680779,
+      "count": 1181,
+      "max": 1230,
+      "min": 9,
+      "total": 937279
+    },
+    "blocks_input_words": {
+      "avg": 123.7688399661304,
+      "count": 1181,
+      "max": 150,
+      "min": 1,
+      "total": 146171
+    },
+    "blocks_kept_chars": {
+      "avg": 798.2350907519447,
+      "count": 1157,
+      "max": 1230,
+      "min": 9,
+      "total": 923558
+    },
+    "blocks_kept_words": {
+      "avg": 124.23509075194468,
+      "count": 1157,
+      "max": 150,
+      "min": 1,
+      "total": 143740
+    },
+    "chunks_output_chars": {
+      "avg": 798.4670710571924,
+      "count": 1154,
+      "max": 1230,
+      "min": 9,
+      "total": 921431
+    },
+    "chunks_output_words": {
+      "avg": 124.27209705372617,
+      "count": 1154,
+      "max": 150,
+      "min": 1,
+      "total": 143410
+    },
+    "docs_input_chars": {
+      "avg": 18791.92,
+      "count": 50,
+      "max": 355107,
+      "min": 246,
+      "total": 939596
+    },
+    "docs_input_words": {
+      "avg": 2923.42,
+      "count": 50,
+      "max": 53523,
+      "min": 30,
+      "total": 146171
+    },
+    "docs_kept_chars": {
+      "avg": 19170.020408163266,
+      "count": 49,
+      "max": 355107,
+      "min": 246,
+      "total": 939331
+    },
+    "docs_kept_words": {
+      "avg": 2982.3673469387754,
+      "count": 49,
+      "max": 53523,
+      "min": 30,
+      "total": 146136
+    }
+  },
+  "paths": {
+    "chunks": "data/chunked_output/processed/chunks.jsonl",
+    "rejected": "data/chunked_output/processed/rejected.jsonl",
+    "stats": "data/chunked_output/processed/stats.json"
+  },
+  "rates": {
+    "blocks_keep_rate": 0.9796782387806944,
+    "chunks_per_block_kept": 0.9974070872947277,
+    "chunks_per_doc_kept": 23.551020408163264,
+    "docs_keep_rate": 0.98
+  },
+  "rejections": {
+    "by_domain": {
+      "carnegiemuseums.org": 2,
+      "en.wikipedia.org": 10,
+      "pittsburghpa.gov": 14,
+      "steelers.com": 1
+    },
+    "by_reason": {
+      "classifier_score_below_threshold:__label__en=0.2296<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.2840<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.2965<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.2996<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.3130<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.3350<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.3857<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4039<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4081<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4149<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4208<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4235<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4269<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4451<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4488<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4634<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4654<0.5000": 2,
+      "classifier_score_below_threshold:__label__en=0.4693<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4822<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4872<0.5000": 2,
+      "classifier_score_below_threshold:__label__en=0.4896<0.5000": 1,
+      "classifier_score_below_threshold:__label__en=0.4990<0.5000": 1,
+      "duplicate_chunk_text": 3
+    },
+    "by_stage": {
+      "block": 24,
+      "chunk": 3
+    },
+    "by_stage_domain": {
+      "block": {
+        "en.wikipedia.org": 9,
+        "pittsburghpa.gov": 14,
+        "steelers.com": 1
+      },
+      "chunk": {
+        "carnegiemuseums.org": 2,
+        "en.wikipedia.org": 1
+      }
+    },
+    "top_domains": [
+      {
+        "count": 14,
+        "domain": "pittsburghpa.gov"
+      },
+      {
+        "count": 10,
+        "domain": "en.wikipedia.org"
+      },
+      {
+        "count": 2,
+        "domain": "carnegiemuseums.org"
+      },
+      {
+        "count": 1,
+        "domain": "steelers.com"
+      }
+    ]
+  },
+  "rejections_by_reason": {
+    "classifier_score_below_threshold:__label__en=0.2296<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.2840<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.2965<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.2996<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.3130<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.3350<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.3857<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4039<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4081<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4149<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4208<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4235<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4269<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4451<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4488<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4634<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4654<0.5000": 2,
+    "classifier_score_below_threshold:__label__en=0.4693<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4822<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4872<0.5000": 2,
+    "classifier_score_below_threshold:__label__en=0.4896<0.5000": 1,
+    "classifier_score_below_threshold:__label__en=0.4990<0.5000": 1,
+    "duplicate_chunk_text": 3
+  },
+  "started_at": "2026-02-22T06:18:09+00:00"
+}

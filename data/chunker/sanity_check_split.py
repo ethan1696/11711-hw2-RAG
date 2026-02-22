@@ -67,19 +67,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--min_block_words",
         type=int,
-        default=8,
-        help="Splitter config: minimum words before tiny-block merge.",
+        default=0,
+        help="Optional minimum words per block (0 disables this threshold).",
+    )
+    parser.add_argument(
+        "--max_block_words",
+        type=int,
+        default=150,
+        help="Splitter config: maximum words per block.",
     )
     parser.add_argument(
         "--min_block_chars",
         type=int,
-        default=40,
-        help="Splitter config: minimum chars before tiny-block merge.",
-    )
-    parser.add_argument(
-        "--no_preserve_list_newlines",
-        action="store_true",
-        help="Disable list/newline preservation in the splitter.",
+        default=0,
+        help="Optional minimum chars per block (0 disables this threshold).",
     )
     return parser.parse_args(argv)
 
@@ -162,8 +163,8 @@ def main(argv: list[str] | None = None) -> int:
 
     split_cfg = BlockSplitConfig(
         min_block_words=args.min_block_words,
+        max_block_words=args.max_block_words,
         min_block_chars=args.min_block_chars,
-        preserve_list_newlines=not args.no_preserve_list_newlines,
     )
     blocks = split_text(excerpt, config=split_cfg)
 

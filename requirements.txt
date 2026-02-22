@@ -11,5 +11,5 @@ PyYAML>=6.0.0
 
 # Utility
 tqdm>=4.66.0
-fasttext-numpy2
-huggingface-hub>=0.28.0
+fasttext-numpy2-wheel>=0.9.2
+fasteners>=0.19
