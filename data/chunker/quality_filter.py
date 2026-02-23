@@ -23,6 +23,7 @@ DEFAULT_FASTTEXT_MODEL_URL = (
 DEFAULT_FASTTEXT_MODEL_FILENAME = "lid.176.bin"
 DEFAULT_FASTTEXT_CACHE_DIR = Path.home() / ".cache" / "fasttext"
 WHITESPACE_RE = re.compile(r"\s+")
+HYPHEN_ONLY_RE = re.compile(r"^-+$")
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,12 +36,22 @@ class QualityFilterConfig:
     cache_dir: str | None = None
     keep_labels: tuple[str, ...] = ("en",)
     min_score: float = 0.5
+    max_pipe_token_fraction: float | None = None
+    max_dash_token_fraction: float | None = None
     top_k: int = 4
     newline_replacement: str = " "
 
     def __post_init__(self) -> None:
         if not (0.0 <= self.min_score <= 1.0):
             raise ValueError("min_score must be between 0 and 1")
+        if self.max_pipe_token_fraction is not None and not (
+            0.0 <= self.max_pipe_token_fraction <= 1.0
+        ):
+            raise ValueError("max_pipe_token_fraction must be between 0 and 1 when set")
+        if self.max_dash_token_fraction is not None and not (
+            0.0 <= self.max_dash_token_fraction <= 1.0
+        ):
+            raise ValueError("max_dash_token_fraction must be between 0 and 1 when set")
         if self.top_k <= 0:
             raise ValueError("top_k must be > 0")
         if not self.model_url.strip():
@@ -95,6 +106,8 @@ class QualityFilter:
             quality_model_path=model_path,
             keep_labels=(target_lang,),
             min_score=threshold,
+            max_pipe_token_fraction=chunker_config.max_pipe_token_fraction,
+            max_dash_token_fraction=chunker_config.max_dash_token_fraction,
         )
         return cls(config=config, model=model)
 
@@ -115,6 +128,47 @@ class QualityFilter:
                 metadata={"label_scores": {}},
             )
 
+        total_words, pipe_words, pipe_fraction, dash_words, dash_fraction = self._token_stats(normalized)
+        table_heuristics = {
+            "word_count_total": total_words,
+            "pipe_token_count": pipe_words,
+            "pipe_token_fraction": pipe_fraction,
+            "max_pipe_token_fraction": self.config.max_pipe_token_fraction,
+            "dash_token_count": dash_words,
+            "dash_token_fraction": dash_fraction,
+            "max_dash_token_fraction": self.config.max_dash_token_fraction,
+        }
+        if (
+            self.config.max_pipe_token_fraction is not None
+            and total_words > 0
+            and pipe_fraction > self.config.max_pipe_token_fraction
+        ):
+            return BlockFilterResult(
+                passed=False,
+                reason=(
+                    "pipe_token_fraction_above_threshold:"
+                    f"{pipe_fraction:.4f}>{self.config.max_pipe_token_fraction:.4f}"
+                ),
+                quality_label=None,
+                quality_score=None,
+                metadata={"label_scores": {}, **table_heuristics},
+            )
+        if (
+            self.config.max_dash_token_fraction is not None
+            and total_words > 0
+            and dash_fraction > self.config.max_dash_token_fraction
+        ):
+            return BlockFilterResult(
+                passed=False,
+                reason=(
+                    "dash_token_fraction_above_threshold:"
+                    f"{dash_fraction:.4f}>{self.config.max_dash_token_fraction:.4f}"
+                ),
+                quality_label=None,
+                quality_score=None,
+                metadata={"label_scores": {}, **table_heuristics},
+            )
+
         labels, scores = self.model.predict(normalized, k=self.config.top_k)
         if not labels:
             return BlockFilterResult(
@@ -122,7 +176,7 @@ class QualityFilter:
                 reason="classifier_no_prediction",
                 quality_label=None,
                 quality_score=None,
-                metadata={"label_scores": {}},
+                metadata={"label_scores": {}, **table_heuristics},
             )
 
         label_scores = self._build_label_scores(labels, scores)
@@ -139,6 +193,7 @@ class QualityFilter:
                 metadata={
                     "label_scores": label_scores,
                     "keep_labels": sorted(self.keep_labels_full),
+                    **table_heuristics,
                 },
             )
 
@@ -150,6 +205,7 @@ class QualityFilter:
             metadata={
                 "label_scores": label_scores,
                 "keep_labels": sorted(self.keep_labels_full),
+                **table_heuristics,
             },
         )
 
@@ -214,6 +270,22 @@ class QualityFilter:
             QualityFilter._full_label(str(label)): float(score)
             for label, score in zip(labels, scores)
         }
+
+    @staticmethod
+    def _token_stats(text: str) -> tuple[int, int, float, int, float]:
+        words = text.split()
+        total_words = len(words)
+        pipe_words = sum(1 for word in words if word == "|")
+        dash_words = sum(1 for word in words if HYPHEN_ONLY_RE.fullmatch(word) is not None)
+        if total_words == 0:
+            return 0, 0, 0.0, 0, 0.0
+        return (
+            total_words,
+            pipe_words,
+            pipe_words / total_words,
+            dash_words,
+            dash_words / total_words,
+        )
 
     @staticmethod
     def _extract_model_labels(model: Any) -> tuple[str, ...]:

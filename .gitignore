@@ -26,7 +26,8 @@ ENV/
 logs/
 
 # Large/generated crawler outputs
-data/crawled_output_assignment/
-data/chunked_output_full/
+data/crawled_output/
+data/chunked_output/
 data/kr/
 data/raw/
+retrieval/output_embed/

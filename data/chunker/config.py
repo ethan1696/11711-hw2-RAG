@@ -49,9 +49,12 @@ class ChunkerConfig:
 
     quality_model_path: str | None = None
     quality_threshold: float | None = 0.5
+    max_pipe_token_fraction: float | None = None
+    max_dash_token_fraction: float | None = None
 
     min_block_words: int = 8
     max_block_words: int = 150
+    block_overlap_sentences: int = 0
     dedup: bool = True
 
     metadata: dict[str, JSONValue] = field(default_factory=dict)
@@ -64,11 +67,21 @@ class ChunkerConfig:
 
         if self.quality_threshold is not None and not (0.0 <= self.quality_threshold <= 1.0):
             raise ValueError("quality_threshold must be between 0 and 1 when set")
+        if self.max_pipe_token_fraction is not None and not (
+            0.0 <= self.max_pipe_token_fraction <= 1.0
+        ):
+            raise ValueError("max_pipe_token_fraction must be between 0 and 1 when set")
+        if self.max_dash_token_fraction is not None and not (
+            0.0 <= self.max_dash_token_fraction <= 1.0
+        ):
+            raise ValueError("max_dash_token_fraction must be between 0 and 1 when set")
 
         if self.min_block_words < 0:
             raise ValueError("min_block_words must be >= 0")
         if self.max_block_words <= 0:
             raise ValueError("max_block_words must be > 0")
+        if self.block_overlap_sentences < 0:
+            raise ValueError("block_overlap_sentences must be >= 0")
 
     @property
     def input_path(self) -> Path:
@@ -108,8 +121,11 @@ class ChunkerConfig:
             "lang": self.lang,
             "quality_model_path": self.quality_model_path,
             "quality_threshold": self.quality_threshold,
+            "max_pipe_token_fraction": self.max_pipe_token_fraction,
+            "max_dash_token_fraction": self.max_dash_token_fraction,
             "min_block_words": self.min_block_words,
             "max_block_words": self.max_block_words,
+            "block_overlap_sentences": self.block_overlap_sentences,
             "dedup": self.dedup,
             "metadata": self.metadata,
         }
@@ -125,8 +141,17 @@ class ChunkerConfig:
                 payload.get("quality_threshold", 0.5),
                 "quality_threshold",
             ),
+            max_pipe_token_fraction=_as_float(
+                payload.get("max_pipe_token_fraction"),
+                "max_pipe_token_fraction",
+            ),
+            max_dash_token_fraction=_as_float(
+                payload.get("max_dash_token_fraction"),
+                "max_dash_token_fraction",
+            ),
             min_block_words=int(payload.get("min_block_words", 8)),
             max_block_words=int(payload.get("max_block_words", 150)),
+            block_overlap_sentences=int(payload.get("block_overlap_sentences", 0)),
             dedup=_as_bool(payload.get("dedup", True), "dedup"),
             metadata=dict(payload.get("metadata", {})),
         )

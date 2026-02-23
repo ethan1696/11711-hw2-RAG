@@ -137,7 +137,11 @@ class Pipeline:
                 continue
 
             try:
-                fetch_result, from_cache = self._get_content(item.url, depth=item.depth)
+                fetch_result, from_cache = self._get_content(
+                    item.url,
+                    depth=item.depth,
+                    seed_url=item.seed_url,
+                )
                 if from_cache:
                     self.stats.increment("fetch_cache_hits")
 
@@ -174,7 +178,7 @@ class Pipeline:
                 self.stats.increment("parse_skipped_cached")
                 continue
 
-            fetch_result = self._cached_fetch_result(url)
+            fetch_result = self._cached_fetch_result(url, depth=0, seed_url=url)
             if fetch_result is None:
                 self.stats.increment("parse_only_missing_raw")
                 continue
@@ -223,13 +227,19 @@ class Pipeline:
 
         return sorted(urls)
 
-    def _get_content(self, url: str, *, depth: int | None = None) -> tuple[FetchResult, bool]:
+    def _get_content(
+        self,
+        url: str,
+        *,
+        depth: int | None = None,
+        seed_url: str | None = None,
+    ) -> tuple[FetchResult, bool]:
         if not self.config.force_download:
-            cached = self._cached_fetch_result(url, depth=depth)
+            cached = self._cached_fetch_result(url, depth=depth, seed_url=seed_url)
             if cached is not None:
                 return cached, True
 
-        fetch_result = self.fetcher.fetch(url, depth=depth)
+        fetch_result = self.fetcher.fetch(url, depth=depth, seed_url=seed_url)
         self.stats.record_fetch(fetch_result)
         self.storage.save_url_meta(fetch_result)
 
@@ -243,7 +253,13 @@ class Pipeline:
 
         return fetch_result, False
 
-    def _cached_fetch_result(self, url: str, *, depth: int | None = None) -> FetchResult | None:
+    def _cached_fetch_result(
+        self,
+        url: str,
+        *,
+        depth: int | None = None,
+        seed_url: str | None = None,
+    ) -> FetchResult | None:
         raw_path = self.storage.find_raw_path(url)
         if raw_path is None:
             return None
@@ -266,7 +282,7 @@ class Pipeline:
             status_code=200,
             content_type=content_type,
             body=body,
-            backend=self.config.backend_for(url, depth=depth),
+            backend=self.config.backend_for(url, depth=depth, seed_url=seed_url),
             error=None,
         )
 
@@ -305,7 +321,7 @@ class Pipeline:
         if frontier is None:
             return
 
-        if depth >= self.config.max_depth:
+        if depth >= self.config.max_depth_for_seed(seed_url):
             return
 
         if not parse_result.out_links:
@@ -387,7 +403,7 @@ class Pipeline:
         *,
         seed_url: str,
     ) -> None:
-        if depth >= self.config.max_depth:
+        if depth >= self.config.max_depth_for_seed(seed_url):
             return
 
         if fetch_result.normalized_content_kind != ContentKind.HTML:

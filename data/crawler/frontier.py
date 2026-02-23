@@ -104,7 +104,7 @@ class Frontier:
         normalized_seed = normalize_url(seed_url) if seed_url else None
         seed_key = normalized_seed or normalized
 
-        if depth > self.config.max_depth:
+        if depth > self.config.max_depth_for_seed(seed_key):
             with self._lock:
                 self._skipped_depth_count += 1
             return EnqueueResult(EnqueueStatus.SKIPPED_DEPTH, normalized_url=normalized)
@@ -136,9 +136,10 @@ class Frontier:
                 self._skipped_budget_count += 1
                 return EnqueueResult(EnqueueStatus.SKIPPED_DOMAIN_BUDGET, normalized_url=normalized)
 
+            per_seed_cap = self.config.per_seed_cap_for(seed_key)
             if (
-                self.config.per_seed_cap is not None
-                and self._accepted_by_seed.get(seed_key, 0) >= self.config.per_seed_cap
+                per_seed_cap is not None
+                and self._accepted_by_seed.get(seed_key, 0) >= per_seed_cap
             ):
                 self._skipped_budget_count += 1
                 return EnqueueResult(EnqueueStatus.SKIPPED_SEED_BUDGET, normalized_url=normalized)

@@ -110,6 +110,38 @@ class DomainConfig:
         }
 
 
+@dataclass(frozen=True, slots=True)
+class SeedConfig:
+    """Per-seed override policy inherited by URLs discovered from that seed."""
+
+    seed_url: str
+    max_depth: int | None = None
+    max_pages: int | None = None
+    backend: FetchBackend | None = None
+    selenium_max_depth: int | None = None
+    rate_limit_seconds: float | None = None
+    selenium_wait_selector: str | None = None
+    selenium_wait_seconds: float | None = None
+    headers: dict[str, str] = field(default_factory=dict)
+    respect_robots: bool | None = None
+    metadata: dict[str, JSONValue] = field(default_factory=dict)
+
+    def to_json(self) -> JSONDict:
+        return {
+            "seed_url": self.seed_url,
+            "max_depth": self.max_depth,
+            "max_pages": self.max_pages,
+            "backend": None if self.backend is None else self.backend.value,
+            "selenium_max_depth": self.selenium_max_depth,
+            "rate_limit_seconds": self.rate_limit_seconds,
+            "selenium_wait_selector": self.selenium_wait_selector,
+            "selenium_wait_seconds": self.selenium_wait_seconds,
+            "headers": self.headers,
+            "respect_robots": self.respect_robots,
+            "metadata": self.metadata,
+        }
+
+
 @dataclass(slots=True)
 class FetchResult:
     """Result of attempting to download one URL."""
@@ -378,6 +410,7 @@ __all__ = [
     "JSONPrimitive",
     "JSONValue",
     "ParseResult",
+    "SeedConfig",
     "URLMetaRecord",
     "infer_content_kind",
     "utc_now_iso",

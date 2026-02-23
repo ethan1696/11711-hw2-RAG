@@ -10,6 +10,7 @@ from .types import SourceDocument, TextBlock
 
 
 WHITESPACE_RE = re.compile(r"\s+")
+WIKIPEDIA_CITATION_RE = re.compile(r"\[\s*\d+\s*\]")
 
 
 @dataclass(frozen=True, slots=True)
@@ -18,6 +19,7 @@ class BlockSplitConfig:
 
     min_block_words: int = 0
     max_block_words: int = 150
+    block_overlap_sentences: int = 0
     min_block_chars: int = 0
     sentence_boundary_pattern: str = r"(?<=[.!?])\s+"
 
@@ -26,6 +28,8 @@ class BlockSplitConfig:
             raise ValueError("min_block_words must be >= 0")
         if self.max_block_words <= 0:
             raise ValueError("max_block_words must be > 0")
+        if self.block_overlap_sentences < 0:
+            raise ValueError("block_overlap_sentences must be >= 0")
         if self.min_block_chars < 0:
             raise ValueError("min_block_chars must be >= 0")
         if not self.sentence_boundary_pattern:
@@ -89,7 +93,11 @@ def split_text(
 
     sentence_boundary_re = re.compile(cfg.sentence_boundary_pattern)
     sentences = _split_sentences(normalized, boundary_re=sentence_boundary_re)
-    packed = _pack_sentences(sentences, max_block_words=cfg.max_block_words)
+    packed = _pack_sentences(
+        sentences,
+        max_block_words=cfg.max_block_words,
+        block_overlap_sentences=cfg.block_overlap_sentences,
+    )
     return _apply_minimums(
         packed,
         min_block_words=cfg.min_block_words,
@@ -101,6 +109,8 @@ def _normalize_doc_text(text: str) -> str:
     value = str(text or "")
     value = value.replace("\r\n", "\n").replace("\r", "\n")
     value = value.replace("\xa0", " ")
+    # Remove inline Wikipedia numeric citation markers such as [58], [ 59 ].
+    value = WIKIPEDIA_CITATION_RE.sub(" ", value)
     value = WHITESPACE_RE.sub(" ", value)
     return value.strip()
 
@@ -110,7 +120,12 @@ def _split_sentences(text: str, *, boundary_re: re.Pattern[str]) -> list[str]:
     return parts
 
 
-def _pack_sentences(sentences: list[str], *, max_block_words: int) -> list[str]:
+def _pack_sentences(
+    sentences: list[str],
+    *,
+    max_block_words: int,
+    block_overlap_sentences: int,
+) -> list[str]:
     blocks: list[str] = []
     current_sentences: list[str] = []
     current_words = 0
@@ -131,8 +146,15 @@ def _pack_sentences(sentences: list[str], *, max_block_words: int) -> list[str]:
 
         if current_sentences and (current_words + sentence_word_count > max_block_words):
             blocks.append(" ".join(current_sentences).strip())
-            current_sentences = [sentence]
-            current_words = sentence_word_count
+            overlap = _overlap_tail_for_next_block(
+                current_sentences,
+                overlap_sentences=block_overlap_sentences,
+                max_overlap_words=max_block_words - sentence_word_count,
+            )
+            current_sentences = list(overlap)
+            current_words = sum(len(item.split()) for item in current_sentences)
+            current_sentences.append(sentence)
+            current_words += sentence_word_count
             continue
 
         current_sentences.append(sentence)
@@ -142,6 +164,24 @@ def _pack_sentences(sentences: list[str], *, max_block_words: int) -> list[str]:
         blocks.append(" ".join(current_sentences).strip())
 
     return [block for block in blocks if block]
+
+
+def _overlap_tail_for_next_block(
+    sentences: list[str],
+    *,
+    overlap_sentences: int,
+    max_overlap_words: int,
+) -> list[str]:
+    if overlap_sentences <= 0 or max_overlap_words <= 0 or not sentences:
+        return []
+
+    tail = list(sentences[-overlap_sentences:])
+    tail_word_counts = [len(sentence.split()) for sentence in tail]
+    tail_total = sum(tail_word_counts)
+    while tail and tail_total > max_overlap_words:
+        tail_total -= tail_word_counts.pop(0)
+        tail.pop(0)
+    return tail
 
 
 def _split_long_sentence(words: list[str], *, max_block_words: int) -> list[str]:

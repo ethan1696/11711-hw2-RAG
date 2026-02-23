@@ -11,12 +11,22 @@ domains:
     rate_limit_seconds: 0.25
 
   - domain: events.cmu.edu
+    backend: requests
+    rate_limit_seconds: 1.0
+
+# Optional per-seed overrides inherited by all descendants of that seed.
+seed_settings:
+  https://events.cmu.edu:
     backend: selenium
-    # Use Selenium for depth <= 0 (seed/root pages only), then fallback to requests.
     selenium_max_depth: 0
+    max_depth: 1
+    max_pages: 120
     selenium_wait_selector: body
     selenium_wait_seconds: 3.0
-    rate_limit_seconds: 1.0
+
+  https://www.cmu.edu/about:
+    max_depth: 2
+    max_pages: 180
 
 max_depth: 2
 max_pages: 800

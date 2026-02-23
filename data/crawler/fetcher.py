@@ -55,7 +55,13 @@ class Fetcher:
         self._closed = False
         self._closed_lock = threading.Lock()
 
-    def fetch(self, url: str, *, depth: int | None = None) -> FetchResult:
+    def fetch(
+        self,
+        url: str,
+        *,
+        depth: int | None = None,
+        seed_url: str | None = None,
+    ) -> FetchResult:
         """Fetch one URL with configured backend, retries, and policies."""
 
         normalized = normalize_url(url)
@@ -79,7 +85,7 @@ class Fetcher:
                 error="Fetcher is closed",
             )
 
-        if self.config.respect_robots_for(normalized):
+        if self.config.respect_robots_for(normalized, seed_url=seed_url):
             allowed_by_robots = self._is_allowed_by_robots(normalized)
             if not allowed_by_robots:
                 return FetchResult(
@@ -91,7 +97,7 @@ class Fetcher:
                     error="Blocked by robots.txt",
                 )
 
-        backend = self.config.backend_for(normalized, depth=depth)
+        backend = self.config.backend_for(normalized, depth=depth, seed_url=seed_url)
         attempt_cfg = _AttemptConfig(
             attempts=max(1, self.config.retries + 1),
             backoff_seconds=max(0.0, self.config.retry_backoff_seconds),
@@ -101,14 +107,20 @@ class Fetcher:
             return self._fetch_with_retries(
                 url=normalized,
                 backend=backend,
-                fetch_once=self._fetch_once_selenium,
+                fetch_once=lambda target_url: self._fetch_once_selenium(
+                    target_url,
+                    seed_url=seed_url,
+                ),
                 attempt_cfg=attempt_cfg,
             )
 
         return self._fetch_with_retries(
             url=normalized,
             backend=FetchBackend.REQUESTS,
-            fetch_once=self._fetch_once_requests,
+            fetch_once=lambda target_url: self._fetch_once_requests(
+                target_url,
+                seed_url=seed_url,
+            ),
             attempt_cfg=attempt_cfg,
         )
 
@@ -196,12 +208,12 @@ class Fetcher:
 
         return True
 
-    def _fetch_once_requests(self, url: str) -> FetchResult:
-        self._wait_for_rate_limit(url)
+    def _fetch_once_requests(self, url: str, *, seed_url: str | None = None) -> FetchResult:
+        self._wait_for_rate_limit(url, seed_url=seed_url)
         started = time.perf_counter()
 
         session = self._thread_local_session()
-        headers = self.config.headers_for(url)
+        headers = self.config.headers_for(url, seed_url=seed_url)
 
         try:
             response = session.get(
@@ -236,8 +248,8 @@ class Fetcher:
                 error=f"{exc.__class__.__name__}: {exc}",
             )
 
-    def _fetch_once_selenium(self, url: str) -> FetchResult:
-        self._wait_for_rate_limit(url)
+    def _fetch_once_selenium(self, url: str, *, seed_url: str | None = None) -> FetchResult:
+        self._wait_for_rate_limit(url, seed_url=seed_url)
         started = time.perf_counter()
 
         with self._selenium_lock:
@@ -259,23 +271,31 @@ class Fetcher:
                 driver.set_page_load_timeout(max(1, int(self.config.timeout_seconds)))
                 driver.get(url)
 
-                domain_cfg = self.config.get_domain_config(url)
-                if domain_cfg is not None:
-                    wait_seconds = domain_cfg.selenium_wait_seconds
-                    if wait_seconds is None:
-                        wait_seconds = self.config.timeout_seconds
+                configured_wait_seconds = self.config.selenium_wait_seconds_for(
+                    url,
+                    seed_url=seed_url,
+                )
+                selector_wait_seconds = (
+                    configured_wait_seconds
+                    if configured_wait_seconds is not None
+                    else self.config.timeout_seconds
+                )
+                wait_selector = self.config.selenium_wait_selector_for(
+                    url,
+                    seed_url=seed_url,
+                )
 
-                    # Optional explicit selector gate: wait until the target node exists.
-                    if domain_cfg.selenium_wait_selector and WebDriverWait and EC and By:
-                        WebDriverWait(driver, wait_seconds).until(
-                            EC.presence_of_element_located((By.CSS_SELECTOR, domain_cfg.selenium_wait_selector))
-                        )
+                # Optional explicit selector gate: wait until the target node exists.
+                if wait_selector and WebDriverWait and EC and By:
+                    WebDriverWait(driver, selector_wait_seconds).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, wait_selector))
+                    )
 
-                    # Always allow optional post-load settling time for async rendering.
-                    # This is especially useful for pages that hydrate content after
-                    # the root selector (e.g., `body`) appears.
-                    if domain_cfg.selenium_wait_seconds and domain_cfg.selenium_wait_seconds > 0:
-                        time.sleep(domain_cfg.selenium_wait_seconds)
+                # Always allow optional post-load settling time for async rendering.
+                # This is especially useful for pages that hydrate content after
+                # the root selector (e.g., `body`) appears.
+                if configured_wait_seconds and configured_wait_seconds > 0:
+                    time.sleep(configured_wait_seconds)
 
                 final_url = driver.current_url or url
                 body = (driver.page_source or "").encode("utf-8", errors="replace")
@@ -311,8 +331,8 @@ class Fetcher:
             self._thread_local.session = session
         return session
 
-    def _wait_for_rate_limit(self, url: str) -> None:
-        wait_seconds = max(0.0, self.config.rate_limit_for(url))
+    def _wait_for_rate_limit(self, url: str, *, seed_url: str | None = None) -> None:
+        wait_seconds = max(0.0, self.config.rate_limit_for(url, seed_url=seed_url))
         if wait_seconds <= 0:
             return
 

@@ -67,6 +67,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         help="Override maximum words per sentence-packed block.",
     )
     parser.add_argument(
+        "--split_overlap_sentences",
+        type=int,
+        default=None,
+        help="Override sentence overlap count between adjacent blocks.",
+    )
+    parser.add_argument(
         "--log_level",
         type=str,
         default="INFO",
@@ -188,6 +194,7 @@ def run_pipeline(
     skip_invalid: bool = True,
     max_docs: int | None = None,
     split_max_block_words: int | None = None,
+    split_overlap_sentences: int | None = None,
 ) -> dict[str, object]:
     """Run chunking pipeline and write outputs."""
 
@@ -195,12 +202,20 @@ def run_pipeline(
     effective_max_block_words = (
         split_max_block_words if split_max_block_words is not None else config.max_block_words
     )
+    effective_overlap_sentences = (
+        split_overlap_sentences
+        if split_overlap_sentences is not None
+        else config.block_overlap_sentences
+    )
     if effective_max_block_words <= 0:
         raise ValueError("max_block_words must be > 0")
+    if effective_overlap_sentences < 0:
+        raise ValueError("block_overlap_sentences must be >= 0")
 
     split_cfg = BlockSplitConfig(
         min_block_words=config.min_block_words,
         max_block_words=effective_max_block_words,
+        block_overlap_sentences=effective_overlap_sentences,
     )
     quality_filter = QualityFilter.from_chunker_config(config)
     stats = StatsCollector()
@@ -320,6 +335,7 @@ def main(argv: list[str] | None = None) -> int:
         skip_invalid=not args.strict,
         max_docs=args.max_docs,
         split_max_block_words=args.split_max_block_words,
+        split_overlap_sentences=args.split_overlap_sentences,
     )
 
     LOGGER.info("Chunking complete:\n%s", json.dumps(summary, indent=2, sort_keys=True))

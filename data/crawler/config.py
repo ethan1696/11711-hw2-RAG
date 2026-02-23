@@ -29,7 +29,8 @@ from .constants import (
     JSON_INDENT,
     SUPPORTED_CONFIG_SUFFIXES,
 )
-from .types import DomainConfig, FetchBackend, JSONDict, JSONValue
+from .types import DomainConfig, FetchBackend, JSONDict, JSONValue, SeedConfig
+from .url import normalize_url
 
 
 def normalize_domain(domain_or_url: str) -> str:
@@ -157,12 +158,118 @@ def _coerce_domain_list(values: list[Any]) -> list[DomainConfig]:
     return list(dedup.values())
 
 
+def _normalize_seed_url(seed_url: str) -> str:
+    raw = str(seed_url).strip()
+    normalized = normalize_url(raw)
+    if normalized is not None:
+        return normalized
+    if not raw:
+        raise ValueError("Seed URL cannot be empty")
+    return raw
+
+
+def _coerce_seed_config(seed_url: str, value: Any) -> SeedConfig:
+    normalized_seed = _normalize_seed_url(seed_url)
+
+    if isinstance(value, SeedConfig):
+        if _normalize_seed_url(value.seed_url) != normalized_seed:
+            raise ValueError(
+                f"Seed config key/url mismatch: key={seed_url!r}, seed_url={value.seed_url!r}"
+            )
+        return value
+
+    if value is None:
+        return SeedConfig(seed_url=normalized_seed)
+
+    if isinstance(value, Mapping):
+        max_depth = _as_int(value.get("max_depth"), "seed.max_depth")
+        if max_depth is not None and max_depth < 0:
+            raise ValueError("seed.max_depth must be >= 0 when set")
+
+        max_pages = _as_int(value.get("max_pages"), "seed.max_pages")
+        if max_pages is not None and max_pages <= 0:
+            raise ValueError("seed.max_pages must be > 0 when set")
+
+        selenium_max_depth = _as_int(
+            value.get("selenium_max_depth"),
+            "seed.selenium_max_depth",
+        )
+        if selenium_max_depth is not None and selenium_max_depth < 0:
+            raise ValueError("seed.selenium_max_depth must be >= 0 when set")
+
+        backend_value = value.get("backend")
+        backend = None if backend_value is None else _to_backend(backend_value)
+
+        headers = {str(k): str(v) for k, v in dict(value.get("headers", {})).items()}
+        metadata = dict(value.get("metadata", {}))
+
+        return SeedConfig(
+            seed_url=normalized_seed,
+            max_depth=max_depth,
+            max_pages=max_pages,
+            backend=backend,
+            selenium_max_depth=selenium_max_depth,
+            rate_limit_seconds=_as_float(
+                value.get("rate_limit_seconds"),
+                "seed.rate_limit_seconds",
+            ),
+            selenium_wait_selector=(
+                None
+                if value.get("selenium_wait_selector") is None
+                else str(value.get("selenium_wait_selector"))
+            ),
+            selenium_wait_seconds=_as_float(
+                value.get("selenium_wait_seconds"),
+                "seed.selenium_wait_seconds",
+            ),
+            headers=headers,
+            respect_robots=(
+                None
+                if value.get("respect_robots") is None
+                else _as_bool(value.get("respect_robots"), "seed.respect_robots")
+            ),
+            metadata=metadata,
+        )
+
+    raise TypeError(f"Unsupported seed config value for {seed_url!r}: {type(value)!r}")
+
+
+def _coerce_seed_settings(value: Any) -> dict[str, SeedConfig]:
+    if value is None:
+        return {}
+
+    if isinstance(value, Mapping):
+        result: dict[str, SeedConfig] = {}
+        for seed_url, seed_cfg_value in value.items():
+            cfg = _coerce_seed_config(str(seed_url), seed_cfg_value)
+            result[cfg.seed_url] = cfg
+        return result
+
+    if isinstance(value, list):
+        result = {}
+        for item in value:
+            if isinstance(item, SeedConfig):
+                result[item.seed_url] = item
+                continue
+            if not isinstance(item, Mapping):
+                raise TypeError(f"Unsupported seed settings entry: {type(item)!r}")
+            if "seed_url" not in item and "url" not in item:
+                raise ValueError(f"Seed settings entry missing 'seed_url'/'url': {item!r}")
+            seed_url = str(item.get("seed_url") or item.get("url"))
+            cfg = _coerce_seed_config(seed_url, item)
+            result[cfg.seed_url] = cfg
+        return result
+
+    raise TypeError(f"Unsupported seed_settings type: {type(value)!r}")
+
+
 @dataclass(slots=True)
 class CrawlConfig:
     """Top-level crawler configuration used by pipeline/frontier/fetcher."""
 
     seeds: list[str]
     domains: list[DomainConfig]
+    seed_settings: dict[str, SeedConfig] = field(default_factory=dict)
 
     max_depth: int = DEFAULT_MAX_DEPTH
     max_pages: int = DEFAULT_MAX_PAGES
@@ -185,9 +292,20 @@ class CrawlConfig:
     metadata: dict[str, JSONValue] = field(default_factory=dict)
 
     _domain_index: dict[str, DomainConfig] = field(init=False, repr=False)
+    _seed_index: dict[str, SeedConfig] = field(init=False, repr=False)
 
     def __post_init__(self) -> None:
-        self.seeds = [seed.strip() for seed in self.seeds if seed and seed.strip()]
+        normalized_seeds: list[str] = []
+        seen_seeds: set[str] = set()
+        for seed in self.seeds:
+            if not seed:
+                continue
+            normalized = _normalize_seed_url(str(seed))
+            if normalized in seen_seeds:
+                continue
+            seen_seeds.add(normalized)
+            normalized_seeds.append(normalized)
+        self.seeds = normalized_seeds
         if not self.seeds:
             raise ValueError("CrawlConfig requires at least one seed URL")
 
@@ -219,12 +337,38 @@ class CrawlConfig:
             raise ValueError("No valid domains configured")
 
         self._domain_index = {domain.domain: domain for domain in self.domains}
+        self.seed_settings = _coerce_seed_settings(self.seed_settings)
+        unknown_seed_settings = [
+            seed_url for seed_url in self.seed_settings.keys() if seed_url not in seen_seeds
+        ]
+        if unknown_seed_settings:
+            raise ValueError(
+                "seed_settings contains URL(s) not present in 'seeds': "
+                + ", ".join(sorted(unknown_seed_settings))
+            )
+        self._seed_index = dict(self.seed_settings)
 
     @property
     def allowed_domains(self) -> list[str]:
         """Return normalized allowed domains."""
 
         return [domain.domain for domain in self.domains]
+
+    def get_seed_config(self, seed_url: str | None) -> SeedConfig | None:
+        """Return per-seed overrides for a seed URL, if configured."""
+
+        if seed_url is None:
+            return None
+        normalized = _normalize_seed_url(seed_url)
+        return self._seed_index.get(normalized)
+
+    def max_depth_for_seed(self, seed_url: str | None) -> int:
+        """Return effective crawl depth for one seed lineage."""
+
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg and seed_cfg.max_depth is not None:
+            return seed_cfg.max_depth
+        return self.max_depth
 
     def get_domain_config(self, domain_or_url: str) -> DomainConfig | None:
         """Match a URL/host to the most specific configured domain policy."""
@@ -265,8 +409,25 @@ class CrawlConfig:
         path = parsed.path or "/"
         return any(path.startswith(prefix) for prefix in domain_cfg.allowed_path_prefixes)
 
-    def backend_for(self, url: str, *, depth: int | None = None) -> FetchBackend:
+    def backend_for(
+        self,
+        url: str,
+        *,
+        depth: int | None = None,
+        seed_url: str | None = None,
+    ) -> FetchBackend:
         """Return effective fetch backend for a URL/depth combination."""
+
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg and seed_cfg.backend is not None:
+            if (
+                depth is not None
+                and seed_cfg.backend == FetchBackend.SELENIUM
+                and seed_cfg.selenium_max_depth is not None
+                and depth > seed_cfg.selenium_max_depth
+            ):
+                return FetchBackend.REQUESTS
+            return seed_cfg.backend
 
         domain_cfg = self.get_domain_config(url)
         if domain_cfg is None:
@@ -282,8 +443,12 @@ class CrawlConfig:
 
         return domain_cfg.backend
 
-    def rate_limit_for(self, url: str) -> float:
+    def rate_limit_for(self, url: str, *, seed_url: str | None = None) -> float:
         """Return effective per-domain/global rate limit for URL."""
+
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg and seed_cfg.rate_limit_seconds is not None:
+            return seed_cfg.rate_limit_seconds
 
         domain_cfg = self.get_domain_config(url)
         if domain_cfg and domain_cfg.rate_limit_seconds is not None:
@@ -298,15 +463,27 @@ class CrawlConfig:
             return domain_cfg.max_pages
         return self.per_domain_cap
 
-    def respect_robots_for(self, url: str) -> bool:
+    def per_seed_cap_for(self, seed_url: str | None) -> int | None:
+        """Return effective per-seed crawl cap for one seed lineage."""
+
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg and seed_cfg.max_pages is not None:
+            return seed_cfg.max_pages
+        return self.per_seed_cap
+
+    def respect_robots_for(self, url: str, *, seed_url: str | None = None) -> bool:
         """Return robots policy with per-domain override support."""
+
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg and seed_cfg.respect_robots is not None:
+            return seed_cfg.respect_robots
 
         domain_cfg = self.get_domain_config(url)
         if domain_cfg and domain_cfg.respect_robots is not None:
             return domain_cfg.respect_robots
         return self.respect_robots
 
-    def headers_for(self, url: str) -> dict[str, str]:
+    def headers_for(self, url: str, *, seed_url: str | None = None) -> dict[str, str]:
         """Return request headers merged from global and per-domain settings."""
 
         merged: dict[str, str] = dict(self.default_headers)
@@ -314,14 +491,50 @@ class CrawlConfig:
         if domain_cfg:
             merged.update(domain_cfg.headers)
 
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg:
+            merged.update(seed_cfg.headers)
+
         merged.setdefault("User-Agent", self.user_agent)
         return merged
+
+    def selenium_wait_selector_for(self, url: str, *, seed_url: str | None = None) -> str | None:
+        """Return effective Selenium CSS selector wait gate."""
+
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg and seed_cfg.selenium_wait_selector is not None:
+            return seed_cfg.selenium_wait_selector
+
+        domain_cfg = self.get_domain_config(url)
+        if domain_cfg is not None:
+            return domain_cfg.selenium_wait_selector
+        return None
+
+    def selenium_wait_seconds_for(self, url: str, *, seed_url: str | None = None) -> float | None:
+        """Return effective Selenium post-load wait setting."""
+
+        seed_cfg = self.get_seed_config(seed_url)
+        if seed_cfg and seed_cfg.selenium_wait_seconds is not None:
+            return seed_cfg.selenium_wait_seconds
+
+        domain_cfg = self.get_domain_config(url)
+        if domain_cfg is not None:
+            return domain_cfg.selenium_wait_seconds
+        return None
 
     def to_dict(self) -> JSONDict:
         """Serialize config for manifests and reproducibility."""
 
         return {
             "seeds": self.seeds,
+            "seed_settings": {
+                seed_url: {
+                    key: value
+                    for key, value in seed_cfg.to_json().items()
+                    if key != "seed_url"
+                }
+                for seed_url, seed_cfg in self.seed_settings.items()
+            },
             "domains": [domain.to_json() for domain in self.domains],
             "max_depth": self.max_depth,
             "max_pages": self.max_pages,
@@ -347,6 +560,28 @@ class CrawlConfig:
         if "seeds" not in payload:
             raise ValueError("Config missing required key: 'seeds'")
 
+        raw_seeds = list(payload["seeds"])
+        seeds: list[str] = []
+        inline_seed_settings: dict[str, SeedConfig] = {}
+        for seed in raw_seeds:
+            if isinstance(seed, Mapping):
+                seed_url_value = seed.get("url", seed.get("seed_url"))
+                if seed_url_value is None:
+                    raise ValueError(f"Seed entry missing 'url'/'seed_url': {seed!r}")
+                seed_url = str(seed_url_value)
+                seeds.append(seed_url)
+
+                seed_payload = dict(seed)
+                seed_payload.pop("url", None)
+                seed_payload.pop("seed_url", None)
+                inline_seed_settings[_normalize_seed_url(seed_url)] = _coerce_seed_config(
+                    seed_url,
+                    seed_payload,
+                )
+                continue
+
+            seeds.append(str(seed))
+
         raw_domains: list[Any]
         if "domains" in payload:
             raw_domains = list(payload.get("domains") or [])
@@ -355,11 +590,16 @@ class CrawlConfig:
             raw_domains = list(payload.get("allowed_domains") or [])
 
         if not raw_domains:
-            raw_domains = [host_from_url(seed) for seed in list(payload["seeds"])]
+            raw_domains = [host_from_url(seed) for seed in seeds]
+
+        explicit_seed_settings = _coerce_seed_settings(payload.get("seed_settings", {}))
+        merged_seed_settings = dict(inline_seed_settings)
+        merged_seed_settings.update(explicit_seed_settings)
 
         return cls(
-            seeds=[str(seed) for seed in list(payload["seeds"])],
+            seeds=seeds,
             domains=_coerce_domain_list(raw_domains),
+            seed_settings=merged_seed_settings,
             max_depth=int(payload.get("max_depth", DEFAULT_MAX_DEPTH)),
             max_pages=int(payload.get("max_pages", DEFAULT_MAX_PAGES)),
             per_domain_cap=_as_int(payload.get("per_domain_cap", DEFAULT_PER_DOMAIN_CAP), "per_domain_cap"),
