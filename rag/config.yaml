@@ -1,0 +1,60 @@
+dense_embed_dir: retrieval/output_embed2
+sparse_index_dir: retrieval/output_embed2
+
+dense_model_name: Alibaba-NLP/gte-Qwen2-7B-instruct
+sparse_index_name: bm25_index.pkl
+sparse_chunk_store_name: null
+dense_device: auto
+dense_dtype: auto
+
+llm_model_name: Qwen/Qwen2.5-14B-Instruct
+llm_torch_dtype: auto
+llm_device: cuda:3
+llm_device_map: null
+trust_remote_code: true
+
+retrieval_mode: dense
+retrieval_top_k: 3
+fusion_top_k: 80
+rrf_k: 60
+dense_weight: 1.0
+sparse_weight: 1.0
+
+max_new_tokens: 512
+temperature: 0.0
+
+system_prompt: |
+  You are a factual question-answering assistant.
+
+  Use the provided context passages to answer the question.
+
+  If the answer is clearly stated in the context, answer confidently.
+  If the context strongly implies the answer but does not state it verbatim, you may infer cautiously.
+  If the context does not contain the answer, answer based on your own knowledge, and do not mention the context or explain that the answer is not in the context.
+
+  Respond with a single complete and concise sentence that directly answers the question.
+  Respond confidently without qualifying your answer. If you are unsure, answer with your best guess. 
+  Do not respond with more than one sentence.
+  Do not mention the context in your answer.
+  Do not hedge or speculate.
+
+user_prompt_template: |
+  Question: {question}
+
+  Context passages:
+  {context_passages}
+
+  Answer (one sentence, do not mention the context):
+
+context_entry_template: |
+  [{rank}] (title: {title}; source: {url})
+  {passage}
+
+empty_context_text: "[No retrieved context]"
+
+show_model_prompt: true
+show_contexts: false
+exit_commands:
+  - exit
+  - quit
+  - :q

@@ -3,7 +3,7 @@
 #   python data/chunker/chunk.py --config data/chunker/config.full.yaml
 
 input_json: data/crawled_output/parsed/docs.jsonl
-output_dir: data/chunked_output
+output_dir: data/chunked_output2
 
 # fastText language classifier (`lid.176.bin`)
 quality_model_path: null
@@ -16,11 +16,13 @@ max_dash_token_fraction: 0.05
 # Language target
 lang: en
 
-# Splitter minimum
-min_block_words: 20
-max_block_words: 80
+# Sentence-window splitter
+sentences_per_block: 3
 # Number of trailing sentences duplicated into the next block
 block_overlap_sentences: 1
+# Post-split word-count filter bounds
+min_block_words: 15
+max_block_words: 45
 
 # Dedup identical block/chunk text across the run
 dedup: true
