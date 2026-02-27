@@ -1,9 +1,4 @@
-# Minimal Pipeline (Current Configs)
-
-This is the minimal path to run the pipeline and produce leaderboard answers with the current config files:
-- `data/crawler/config.yaml`
-- `data/chunker/config.full.yaml`
-- `rag/config.yaml`
+# RAG on Pittsburgh Facts
 
 ## 1) Setup
 
