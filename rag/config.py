@@ -1,5 +1,3 @@
-"""Config loading for interactive RAG debug/testing."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -58,6 +56,20 @@ def _as_optional_str(value: Any) -> str | None:
     return text if text else None
 
 
+def _payload_get_alias(
+    payload: Mapping[str, Any],
+    keys: tuple[str, ...],
+    *,
+    default: Any,
+) -> Any:
+    """Return first present key from payload (supports backward-compatible aliases)."""
+
+    for key in keys:
+        if key in payload:
+            return payload[key]
+    return default
+
+
 @dataclass(slots=True)
 class RAGDebugConfig:
     """Flat config for constructing RAGSystem and interactive debug loop."""
@@ -111,8 +123,8 @@ class RAGDebugConfig:
         self.llm_device_map = _as_optional_str(self.llm_device_map)
 
         self.retrieval_mode = str(self.retrieval_mode).strip().lower()  # type: ignore[assignment]
-        if self.retrieval_mode not in {"dense", "sparse", "hybrid"}:
-            raise ValueError("retrieval_mode must be one of: dense, sparse, hybrid")
+        if self.retrieval_mode not in {"dense", "sparse", "hybrid", "closed_book"}:
+            raise ValueError("retrieval_mode must be one of: dense, sparse, hybrid, closed_book")
         if self.retrieval_top_k <= 0:
             raise ValueError("retrieval_top_k must be > 0")
         if self.fusion_top_k is not None and self.fusion_top_k <= 0:
@@ -134,18 +146,44 @@ class RAGDebugConfig:
 
     @classmethod
     def from_dict(cls, payload: Mapping[str, Any]) -> "RAGDebugConfig":
+        dense_device_raw = _payload_get_alias(
+            payload,
+            ("embed_device", "embedding_device", "dense_device"),
+            default="auto",
+        )
+        dense_dtype_raw = _payload_get_alias(
+            payload,
+            ("embed_dtype", "embedding_dtype", "dense_dtype"),
+            default="auto",
+        )
+        llm_torch_dtype_raw = _payload_get_alias(
+            payload,
+            ("llm_torch_dtype", "llm_dtype", "generation_dtype", "generator_dtype"),
+            default="auto",
+        )
+        llm_device_raw = _payload_get_alias(
+            payload,
+            ("llm_device", "generation_device", "generator_device"),
+            default=None,
+        )
+        llm_device_map_raw = _payload_get_alias(
+            payload,
+            ("llm_device_map", "generation_device_map", "generator_device_map"),
+            default="auto",
+        )
+
         return cls(
             dense_embed_dir=str(payload.get("dense_embed_dir", "retrieval/output_embed")),
             sparse_index_dir=str(payload.get("sparse_index_dir", "retrieval/output_embed")),
             dense_model_name=str(payload.get("dense_model_name", "Alibaba-NLP/gte-Qwen2-7B-instruct")),
             sparse_index_name=str(payload.get("sparse_index_name", "bm25_index.pkl")),
             sparse_chunk_store_name=payload.get("sparse_chunk_store_name"),
-            dense_device=str(payload.get("dense_device", "auto")),
-            dense_dtype=str(payload.get("dense_dtype", "auto")),
+            dense_device=str("auto" if dense_device_raw is None else dense_device_raw),
+            dense_dtype=str("auto" if dense_dtype_raw is None else dense_dtype_raw),
             llm_model_name=str(payload.get("llm_model_name", DEFAULT_QWEN_MODEL)),
-            llm_torch_dtype=payload.get("llm_torch_dtype", "auto"),
-            llm_device=payload.get("llm_device"),
-            llm_device_map=payload.get("llm_device_map", "auto"),
+            llm_torch_dtype=llm_torch_dtype_raw,
+            llm_device=llm_device_raw,
+            llm_device_map=llm_device_map_raw,
             trust_remote_code=_as_bool(payload.get("trust_remote_code", True), "trust_remote_code"),
             retrieval_mode=str(payload.get("retrieval_mode", "hybrid")),
             retrieval_top_k=_as_int(payload.get("retrieval_top_k", 6), "retrieval_top_k"),

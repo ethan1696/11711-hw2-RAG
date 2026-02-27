@@ -1,19 +1,24 @@
-dense_embed_dir: retrieval/output_embed2
-sparse_index_dir: retrieval/output_embed2
+dense_embed_dir: retrieval/output_embed
+sparse_index_dir: retrieval/output_embed
 
 dense_model_name: Alibaba-NLP/gte-Qwen2-7B-instruct
 sparse_index_name: bm25_index.pkl
 sparse_chunk_store_name: null
-dense_device: auto
+# Embedding/retriever model device (for dense/hybrid retrieval)
+embed_device: cuda:6
+# legacy alias still supported: dense_device
 dense_dtype: auto
 
 llm_model_name: Qwen/Qwen2.5-14B-Instruct
 llm_torch_dtype: auto
+# LLM generation device
+
 llm_device: cuda:3
 llm_device_map: null
 trust_remote_code: true
 
-retrieval_mode: dense
+# retrieval_mode: dense | sparse | hybrid | closed_book
+retrieval_mode: closed_book
 retrieval_top_k: 3
 fusion_top_k: 80
 rrf_k: 60

@@ -1,12 +1,3 @@
-"""CLI for embedding chunk JSONL into dense vectors.
-
-Writes outputs through `retrieval.embed.storage.Writer`:
-- embeddings.npy
-- embedding_to_uid.jsonl
-- chunk_store.jsonl
-- stats.json
-"""
-
 from __future__ import annotations
 
 import argparse

@@ -28,9 +28,4 @@ logs/
 # Large/generated crawler outputs
 data/crawled_output/
 data/chunked_output/
-data/kr/
-data/raw/
 retrieval/output_embed/
-retrieval/output_embed2/
-rag/leaderboard_answers.json
-rag/leaderboard_queries.json

@@ -1,8 +1,3 @@
-"""Utility helpers for embedding pipeline.
-
-This module intentionally keeps logic simple and dependency-light.
-"""
-
 from __future__ import annotations
 
 from hashlib import sha1

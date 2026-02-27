@@ -1,5 +1,3 @@
-"""Minimal RAG system wiring retrievers + Qwen2.5-Instruct generation."""
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -12,7 +10,7 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from retrieval.unified_retrieval import UnifiedRetriever
 
 
-RetrievalMode = Literal["dense", "sparse", "hybrid"]
+RetrievalMode = Literal["dense", "sparse", "hybrid", "closed_book"]
 
 DEFAULT_QWEN_MODEL = "Qwen/Qwen2.5-14B-Instruct"
 DEFAULT_SYSTEM_PROMPT = (
@@ -83,17 +81,22 @@ class RAGSystem:
         self.retrieval_top_k = int(retrieval_top_k)
         if self.retrieval_top_k <= 0:
             raise ValueError("retrieval_top_k must be > 0")
+        if self.retrieval_mode not in {"dense", "sparse", "hybrid", "closed_book"}:
+            raise ValueError("retrieval_mode must be one of: dense, sparse, hybrid, closed_book")
 
-        self.retriever = UnifiedRetriever(
-            dense_embed_dir=dense_embed_dir,
-            sparse_index_dir=sparse_index_dir,
-            dense_model=dense_model_name,
-            dense_device=dense_device,
-            dense_dtype=dense_dtype,
-            sparse_index_name=sparse_index_name,
-            sparse_chunk_store_name=sparse_chunk_store_name,
-            dense_trust_remote_code=trust_remote_code,
-        )
+        self._retriever_kwargs: dict[str, Any] = {
+            "dense_embed_dir": dense_embed_dir,
+            "sparse_index_dir": sparse_index_dir,
+            "dense_model": dense_model_name,
+            "dense_device": dense_device,
+            "dense_dtype": dense_dtype,
+            "sparse_index_name": sparse_index_name,
+            "sparse_chunk_store_name": sparse_chunk_store_name,
+            "dense_trust_remote_code": trust_remote_code,
+        }
+        self.retriever: UnifiedRetriever | None = None
+        if self.retrieval_mode != "closed_book":
+            self.retriever = UnifiedRetriever(**self._retriever_kwargs)
 
         self.system_prompt = str(system_prompt)
         self.user_prompt_template = str(user_prompt_template)
@@ -145,6 +148,11 @@ class RAGSystem:
             self.model.to(resolved_llm_device)
         self.model.eval()
 
+    def _ensure_retriever(self) -> UnifiedRetriever:
+        if self.retriever is None:
+            self.retriever = UnifiedRetriever(**self._retriever_kwargs)
+        return self.retriever
+
     def answer_question(
         self,
         question: str,
@@ -167,35 +175,44 @@ class RAGSystem:
         """Retrieve context and generate an answer with Qwen."""
 
         retrieval_mode = mode or self.retrieval_mode
-        retrieval_k = self.retrieval_top_k if top_k is None else int(top_k)
-        if retrieval_k <= 0:
-            raise ValueError("top_k must be > 0")
+        if retrieval_mode not in {"dense", "sparse", "hybrid", "closed_book"}:
+            raise ValueError("mode must be one of: dense, sparse, hybrid, closed_book")
         if max_new_tokens <= 0:
             raise ValueError("max_new_tokens must be > 0")
 
-        raw_docs = self.retriever.search(
-            question,
-            top_k=retrieval_k,
-            mode=retrieval_mode,
-            fusion_top_k=self.fusion_top_k if fusion_top_k is None else fusion_top_k,
-            rrf_k=self.rrf_k if rrf_k is None else int(rrf_k),
-            dense_weight=self.dense_weight if dense_weight is None else float(dense_weight),
-            sparse_weight=self.sparse_weight if sparse_weight is None else float(sparse_weight),
-        )
-        docs = [self._to_retrieved_doc(item) for item in raw_docs]
-        context_text = self._format_context(
-            docs,
-            context_entry_template=(
-                self.context_entry_template
-                if context_entry_template is None
-                else str(context_entry_template)
-            ),
-            empty_context_text=(
-                self.empty_context_text
-                if empty_context_text is None
-                else str(empty_context_text)
-            ),
-        )
+        docs: list[RetrievedDoc]
+        if retrieval_mode == "closed_book":
+            retrieval_k = 0
+            docs = []
+            context_text = ""
+        else:
+            retrieval_k = self.retrieval_top_k if top_k is None else int(top_k)
+            if retrieval_k <= 0:
+                raise ValueError("top_k must be > 0")
+
+            raw_docs = self._ensure_retriever().search(
+                question,
+                top_k=retrieval_k,
+                mode=retrieval_mode,
+                fusion_top_k=self.fusion_top_k if fusion_top_k is None else fusion_top_k,
+                rrf_k=self.rrf_k if rrf_k is None else int(rrf_k),
+                dense_weight=self.dense_weight if dense_weight is None else float(dense_weight),
+                sparse_weight=self.sparse_weight if sparse_weight is None else float(sparse_weight),
+            )
+            docs = [self._to_retrieved_doc(item) for item in raw_docs]
+            context_text = self._format_context(
+                docs,
+                context_entry_template=(
+                    self.context_entry_template
+                    if context_entry_template is None
+                    else str(context_entry_template)
+                ),
+                empty_context_text=(
+                    self.empty_context_text
+                    if empty_context_text is None
+                    else str(empty_context_text)
+                ),
+            )
         resolved_user_prompt_template = (
             self.user_prompt_template
             if user_prompt_template is None

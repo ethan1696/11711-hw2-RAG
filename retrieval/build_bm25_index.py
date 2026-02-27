@@ -1,16 +1,3 @@
-"""Build and cache a BM25 index from chunk JSONL.
-
-Outputs under ``output_dir``:
-- ``bm25_index.pkl``: pickled BM25 object + row-to-chunk mapping + config
-- ``bm25_stats.json``: run summary
-- optional ``bm25_chunk_store.jsonl`` copy of payload rows
-
-Notes:
-- If input rows already contain ``chunk_uid`` (for example embedding ``chunk_store.jsonl``),
-  those IDs are reused exactly.
-- This script avoids overwriting embedding artifacts like ``chunk_store.jsonl`` and ``stats.json``.
-"""
-
 from __future__ import annotations
 
 import argparse

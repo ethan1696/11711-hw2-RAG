@@ -1,5 +1,3 @@
-"""Batch runner for leaderboard queries using the config-driven RAG system."""
-
 from __future__ import annotations
 
 import argparse
@@ -53,6 +51,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=None,
         help="Optional cap for quick sanity checks.",
     )
+    parser.add_argument(
+        "--closed_book",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Run without retrieval context (LLM only).",
+    )
     return parser.parse_args(argv)
 
 
@@ -104,7 +108,11 @@ def _load_queries(path: Path) -> list[dict[str, str]]:
 
 def run(args: argparse.Namespace) -> dict[str, Any]:
     config = load_rag_config(args.config)
+    if bool(args.closed_book):
+        # Force closed-book at construction time so retriever models are not loaded.
+        config.retrieval_mode = "closed_book"
     rag = _build_system(config)
+    run_mode = config.retrieval_mode
 
     queries = _load_queries(args.queries_json)
     if args.max_queries is not None:
@@ -117,7 +125,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
         result = rag.answer_question(
             row["question"],
             top_k=config.retrieval_top_k,
-            mode=config.retrieval_mode,
+            mode=run_mode,
             max_new_tokens=config.max_new_tokens,
             temperature=config.temperature,
             return_context=False,
@@ -133,6 +141,7 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     return {
         "output_json": str(args.output_json),
         "query_count": len(queries),
+        "mode": run_mode,
     }
 
 

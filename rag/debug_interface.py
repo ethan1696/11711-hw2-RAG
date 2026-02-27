@@ -1,5 +1,3 @@
-"""Interactive debug/testing interface for config-driven RAG runs."""
-
 from __future__ import annotations
 
 import argparse

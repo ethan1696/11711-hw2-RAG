@@ -1,5 +1,3 @@
-"""Unified retrieval interface for dense, sparse, and hybrid (RRF) ranking."""
-
 from __future__ import annotations
 
 import argparse

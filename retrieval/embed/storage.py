@@ -1,11 +1,3 @@
-"""Minimal embedding storage for dense retrieval experiments.
-
-This module stores three artifacts under one output directory:
-- ``embeddings.npy``: embedding matrix where row ``i`` is one chunk embedding
-- ``embedding_to_uid.jsonl``: mapping from embedding row id to ``chunk_uid``
-- ``chunk_store.jsonl``: mapping from ``chunk_uid`` to chunk payload data
-"""
-
 from __future__ import annotations
 
 from dataclasses import dataclass

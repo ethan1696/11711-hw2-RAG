@@ -1,0 +1,630 @@
+[
+    {
+        "question": "When was Carnegie Mellon University founded?",
+        "id": "1"
+    },
+    {
+        "question": "What was the original purpose of the Carnegie Technical Schools?",
+        "id": "2"
+    },
+    {
+        "question": "When did the Carnegie Technical Schools become the Carnegie Institute of Technology?",
+        "id": "3"
+    },
+    {
+        "question": "What significant event occurred in 1967 concerning Carnegie Mellon University?",
+        "id": "4"
+    },
+    {
+        "question": "Who were the founders of the Mellon Institute of Industrial Research?",
+        "id": "5"
+    },
+    {
+        "question": "What is the motto of Carnegie Mellon University?",
+        "id": "6"
+    },
+    {
+        "question": "Where is Carnegie Mellon University located?",
+        "id": "7"
+    },
+    {
+        "question": "How many colleges and schools comprise Carnegie Mellon University?",
+        "id": "8"
+    },
+    {
+        "question": "What are the names of the seven colleges and schools at Carnegie Mellon University?",
+        "id": "9"
+    },
+    {
+        "question": "Which college at Carnegie Mellon is renowned for its computer science program?",
+        "id": "10"
+    },
+    {
+        "question": "What is the name of Carnegie Mellon's business school?",
+        "id": "11"
+    },
+    {
+        "question": "Which notable artist and alumnus of Carnegie Mellon is associated with the Pop Art movement?",
+        "id": "12"
+    },
+    {
+        "question": "What is the name of Carnegie Mellon's student newspaper?",
+        "id": "13"
+    },
+    {
+        "question": "What is the official mascot of Carnegie Mellon University?",
+        "id": "14"
+    },
+    {
+        "question": "What are the official colors of Carnegie Mellon University?",
+        "id": "15"
+    },
+    {
+        "question": "What is the name of the annual event where Carnegie Mellon students build and race buggies?",
+        "id": "16"
+    },
+    {
+        "question": "What is 'The Fence' at Carnegie Mellon University?",
+        "id": "17"
+    },
+    {
+        "question": "Which building on Carnegie Mellon's campus houses the College of Fine Arts?",
+        "id": "18"
+    },
+    {
+        "question": "What is the name of the main library at Carnegie Mellon University?",
+        "id": "19"
+    },
+    {
+        "question": "Which notable computer scientist and Carnegie Mellon professor co-created the programming language 'Alice'?",
+        "id": "20"
+    },
+    {
+        "question": "What is the 'Last Lecture' given by Randy Pausch known for?",
+        "id": "21"
+    },
+    {
+        "question": "Which Carnegie Mellon alumnus co-founded Sun Microsystems?",
+        "id": "22"
+    },
+    {
+        "question": "What is the name of Carnegie Mellon's annual spring carnival?",
+        "id": "23"
+    },
+    {
+        "question": "Which building on campus is known for its distinctive cylindrical design?",
+        "id": "24"
+    },
+    {
+        "question": "What is the 'Kiltie Band' at Carnegie Mellon?",
+        "id": "25"
+    },
+    {
+        "question": "Which research institute at Carnegie Mellon focuses on robotics?",
+        "id": "26"
+    },
+    {
+        "question": "What is the name of the interdisciplinary program combining technology and the arts at Carnegie Mellon?",
+        "id": "27"
+    },
+    {
+        "question": "Which Carnegie Mellon alumnus is known for creating the emoticon ':-)'?",
+        "id": "28"
+    },
+    {
+        "question": "What is the 'Scotty Saturday' tradition at Carnegie Mellon?",
+        "id": "29"
+    },
+    {
+        "question": "Which building serves as the main administrative hub of Carnegie Mellon University?",
+        "id": "30"
+    },
+    {
+        "question": "What is the 'Mobot' competition at Carnegie Mellon?",
+        "id": "31"
+    },
+    {
+        "question": "Which Carnegie Mellon alumnus played Spock in the 'Star Trek' reboot films?",
+        "id": "32"
+    },
+    {
+        "question": "What is the origin of Carnegie Mellon University's name?",
+        "id": "33"
+    },
+    {
+        "question": "Which CMU tradition involves students painting a specific campus landmark?",
+        "id": "34"
+    },
+    {
+        "question": "What is the significance of 'The Cut' on CMU's campus?",
+        "id": "35"
+    },
+    {
+        "question": "Which CMU alumnus is known for his contributions to the field of artificial intelligence?",
+        "id": "36"
+    },
+    {
+        "question": "What is the 'Scotch'n'Soda Theatre' at CMU?",
+        "id": "37"
+    },
+    {
+        "question": "Which CMU building is named after the university's founder?",
+        "id": "38"
+    },
+    {
+        "question": "What is the 'Plaid Parliament of Pwning' at CMU?",
+        "id": "39"
+    },
+    {
+        "question": "Which CMU program is renowned for its contributions to the arts?",
+        "id": "40"
+    },
+    {
+        "question": "What is the 'Mobot' competition at CMU?",
+        "id": "41"
+    },
+    {
+        "question": "Which CMU alumnus co-founded the technology company Sun Microsystems?",
+        "id": "42"
+    },
+    {
+        "question": "Which CMU tradition involves a race with uniquely designed vehicles?",
+        "id": "43"
+    },
+    {
+        "question": "What is the significance of 'The Mall' on CMU's campus?",
+        "id": "44"
+    },
+    {
+        "question": "Which CMU alumnus is known for his work in computer networking and the development of the ARPANET?",
+        "id": "45"
+    },
+    {
+        "question": "What is the 'Spring Carnival' at CMU?",
+        "id": "46"
+    },
+    {
+        "question": "Which CMU building houses the School of Computer Science?",
+        "id": "47"
+    },
+    {
+        "question": "What is the 'Andrew File System' (AFS) developed at CMU?",
+        "id": "48"
+    },
+    {
+        "question": "Which CMU alumnus is known for his pioneering work in virtual reality?",
+        "id": "49"
+    },
+    {
+        "question": "What was Deep Thought, and how was CMU involved?",
+        "id": "50"
+    },
+    {
+        "question": "What is the significance of the NavLab project at CMU?",
+        "id": "51"
+    },
+    {
+        "question": "How did CMU contribute to the development of speech recognition technology?",
+        "id": "52"
+    },
+    {
+        "question": "Which AI innovation from CMU played a role in early machine learning applications?",
+        "id": "53"
+    },
+    {
+        "question": "What is the significance of the DARPA Grand Challenge for CMU?",
+        "id": "54"
+    },
+    {
+        "question": "What role did CMU play in the development of self-driving taxis?",
+        "id": "55"
+    },
+    {
+        "question": "Which robotic innovation developed at CMU helped with planetary exploration?",
+        "id": "56"
+    },
+    {
+        "question": "What is Libratus, and how is CMU connected to it?",
+        "id": "57"
+    },
+    {
+        "question": "What is Pittsburgh Restaurant Week?",
+        "id": "58"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is known for its Italian heritage and hosts Little Italy Days?",
+        "id": "59"
+    },
+    {
+        "question": "What is the Pittsburgh Taco Festival?",
+        "id": "60"
+    },
+    {
+        "question": "Which Pittsburgh festival celebrates the city's love for the banana split?",
+        "id": "61"
+    },
+    {
+        "question": "What is the Strip District known for?",
+        "id": "62"
+    },
+    {
+        "question": "Which historic Pittsburgh market is famous for its fish sandwiches?",
+        "id": "63"
+    },
+    {
+        "question": "What type of cuisine does Gaucho Parrilla Argentina serve?",
+        "id": "64"
+    },
+    {
+        "question": "Which Pittsburgh restaurant is known for its 'Pittsburgh Salad' topped with fries?",
+        "id": "65"
+    },
+    {
+        "question": "What is the signature dish of Pamela's Diner?",
+        "id": "66"
+    },
+    {
+        "question": "Which Pittsburgh restaurant offers a unique dining experience in a former church?",
+        "id": "67"
+    },
+    {
+        "question": "What type of cuisine does Sienna Mercato specialize in?",
+        "id": "68"
+    },
+    {
+        "question": "Which Pittsburgh bakery is known for its burnt almond torte?",
+        "id": "69"
+    },
+    {
+        "question": "What is the specialty of Pusadee's Garden in Pittsburgh?",
+        "id": "70"
+    },
+    {
+        "question": "Which Pittsburgh ice cream shop is known for its unique flavors like 'Salty Caramel'?",
+        "id": "71"
+    },
+    {
+        "question": "What type of cuisine does Morcilla in Pittsburgh serve?",
+        "id": "72"
+    },
+    {
+        "question": "Which Pittsburgh coffee shop is known for its in-house roasted beans and latte art?",
+        "id": "73"
+    },
+    {
+        "question": "What is the specialty of DiAnoia's Eatery in Pittsburgh?",
+        "id": "74"
+    },
+    {
+        "question": "Which Pittsburgh restaurant offers a farm-to-table dining experience?",
+        "id": "75"
+    },
+    {
+        "question": "What type of food does The Eagle in Pittsburgh serve?",
+        "id": "76"
+    },
+    {
+        "question": "Which Pittsburgh restaurant is famous for its pierogies?",
+        "id": "77"
+    },
+    {
+        "question": "What is the specialty of Chengdu Gourmet in Pittsburgh?",
+        "id": "78"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is known for its array of vegan and vegetarian restaurants?",
+        "id": "79"
+    },
+    {
+        "question": "What type of cuisine does Apteka in Pittsburgh serve?",
+        "id": "80"
+    },
+    {
+        "question": "Which Pittsburgh restaurant is known for its extensive whiskey selection?",
+        "id": "81"
+    },
+    {
+        "question": "What is the specialty of Noodlehead in Pittsburgh?",
+        "id": "82"
+    },
+    {
+        "question": "Which Pittsburgh restaurant offers a rooftop dining experience with city views?",
+        "id": "83"
+    },
+    {
+        "question": "What type of cuisine does täkō in Pittsburgh serve?",
+        "id": "84"
+    },
+    {
+        "question": "Which Pittsburgh restaurant is known for its brunch offerings and Bloody Mary bar?",
+        "id": "85"
+    },
+    {
+        "question": "What type of cuisine does Dish Osteria Bar in Pittsburgh serve?",
+        "id": "86"
+    },
+    {
+        "question": "What is the specialty of Fet Fisk in Pittsburgh?",
+        "id": "87"
+    },
+    {
+        "question": "Which Pittsburgh establishment was voted the best fish fry in Western Pennsylvania?",
+        "id": "88"
+    },
+    {
+        "question": "What is unique about Iron Born Pizza in Pittsburgh's Strip District?",
+        "id": "89"
+    },
+    {
+        "question": "What type of shopping experience does Walnut Street in Shadyside offer?",
+        "id": "90"
+    },
+    {
+        "question": "What can visitors expect at the Waterworks Shopping Plaza?",
+        "id": "91"
+    },
+    {
+        "question": "Which Pittsburgh street has transformed into a center for arts, dining, and music?",
+        "id": "92"
+    },
+    {
+        "question": "What is Wholey's known for in Pittsburgh's Strip District?",
+        "id": "93"
+    },
+    {
+        "question": "What does Station Square offer to visitors in Pittsburgh?",
+        "id": "94"
+    },
+    {
+        "question": "What is the significance of Market Square in downtown Pittsburgh?",
+        "id": "95"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is known for its vibrant arts scene?",
+        "id": "96"
+    },
+    {
+        "question": "Which Pittsburgh bakery is known for its macarons?",
+        "id": "97"
+    },
+    {
+        "question": "What is the specialty of The Vandal in Pittsburgh?",
+        "id": "98"
+    },
+    {
+        "question": "Which Pittsburgh farmers market is open year-round?",
+        "id": "99"
+    },
+    {
+        "question": "What is the specialty of Driftwood Oven in Pittsburgh?",
+        "id": "100"
+    },
+    {
+        "question": "Which Pittsburgh food festival focuses on Greek cuisine?",
+        "id": "101"
+    },
+    {
+        "question": "Which Pittsburgh restaurant is famous for its cheesesteaks?",
+        "id": "102"
+    },
+    {
+        "question": "What is the specialty of Grand Concourse in Pittsburgh?",
+        "id": "103"
+    },
+    {
+        "question": "Where can visitors find an authentic Brazilian steakhouse experience in Pittsburgh?",
+        "id": "104"
+    },
+    {
+        "question": "Which Pittsburgh chocolate shop is known for handmade confections?",
+        "id": "105"
+    },
+    {
+        "question": "What is the specialty of Tessaro’s in Pittsburgh?",
+        "id": "106"
+    },
+    {
+        "question": "Which Pittsburgh store is known for vintage and rare vinyl records?",
+        "id": "107"
+    },
+    {
+        "question": "What is the origin of Pittsburgh's name?",
+        "id": "108"
+    },
+    {
+        "question": "Where is Pittsburgh located geographically?",
+        "id": "109"
+    },
+    {
+        "question": "What nickname is Pittsburgh known by due to its historical industry?",
+        "id": "110"
+    },
+    {
+        "question": "Which Native American tribes originally inhabited the Pittsburgh region?",
+        "id": "111"
+    },
+    {
+        "question": "What significant event took place at Fort Duquesne?",
+        "id": "112"
+    },
+    {
+        "question": "When was Pittsburgh officially incorporated as a city?",
+        "id": "113"
+    },
+    {
+        "question": "What is the significance of the year 1758 in Pittsburgh's history?",
+        "id": "114"
+    },
+    {
+        "question": "Which two rivers converge to form the Ohio River in Pittsburgh?",
+        "id": "115"
+    },
+    {
+        "question": "What was the Whiskey Rebellion, and how did it relate to Pittsburgh?",
+        "id": "116"
+    },
+    {
+        "question": "How did Pittsburgh's geography contribute to its industrial growth?",
+        "id": "117"
+    },
+    {
+        "question": "What role did Pittsburgh play during the American Civil War?",
+        "id": "118"
+    },
+    {
+        "question": "When did the Great Fire of Pittsburgh occur, and what was its impact?",
+        "id": "119"
+    },
+    {
+        "question": "What is the Fort Pitt Blockhouse?",
+        "id": "120"
+    },
+    {
+        "question": "Which major company was founded in Pittsburgh in 1869?",
+        "id": "121"
+    },
+    {
+        "question": "What is the significance of the year 1901 for Pittsburgh's steel industry?",
+        "id": "122"
+    },
+    {
+        "question": "How did Pittsburgh's economy change after World War II?",
+        "id": "123"
+    },
+    {
+        "question": "What is the 'Renaissance' period in Pittsburgh's history?",
+        "id": "124"
+    },
+    {
+        "question": "Which university in Pittsburgh was founded in 1787?",
+        "id": "125"
+    },
+    {
+        "question": "What is the significance of the year 1964 for Pittsburgh's sports history?",
+        "id": "126"
+    },
+    {
+        "question": "How many bridges are there in Pittsburgh?",
+        "id": "127"
+    },
+    {
+        "question": "What is Point State Park?",
+        "id": "128"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is known for its cultural diversity?",
+        "id": "129"
+    },
+    {
+        "question": "What is the Cathedral of Learning?",
+        "id": "130"
+    },
+    {
+        "question": "Which Pittsburgh-based company is known for its aluminum products?",
+        "id": "131"
+    },
+    {
+        "question": "What is the historical significance of the Homestead Strike?",
+        "id": "132"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is known as the birthplace of Andy Warhol?",
+        "id": "133"
+    },
+    {
+        "question": "What is the Pittsburgh Renaissance Historic District?",
+        "id": "134"
+    },
+    {
+        "question": "Which Pittsburgh museum is dedicated to contemporary art?",
+        "id": "135"
+    },
+    {
+        "question": "What is the significance of the year 1979 for Pittsburgh sports?",
+        "id": "136"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is known for its historic architecture?",
+        "id": "137"
+    },
+    {
+        "question": "What is the Phipps Conservatory and Botanical Gardens?",
+        "id": "138"
+    },
+    {
+        "question": "Which Pittsburgh stadium is home to the Pittsburgh Steelers?",
+        "id": "139"
+    },
+    {
+        "question": "What is the Carnegie Science Center?",
+        "id": "140"
+    },
+    {
+        "question": "Who was Andrew Carnegie, and what impact did he have on Pittsburgh?",
+        "id": "141"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is known for its vibrant arts scene?",
+        "id": "142"
+    },
+    {
+        "question": "What is unique about Pittsburgh’s Inclines?",
+        "id": "143"
+    },
+    {
+        "question": "What is the Nationality Rooms program at the University of Pittsburgh?",
+        "id": "144"
+    },
+    {
+        "question": "Which Pittsburgh bridge is the longest?",
+        "id": "145"
+    },
+    {
+        "question": "What is the significance of the Smithfield Street Bridge?",
+        "id": "146"
+    },
+    {
+        "question": "Which famous sandwiches are associated with Pittsburgh?",
+        "id": "147"
+    },
+    {
+        "question": "What is the role of the Allegheny County Courthouse?",
+        "id": "148"
+    },
+    {
+        "question": "What is Pittsburgh's population as of the most recent census?",
+        "id": "149"
+    },
+    {
+        "question": "What is the economic significance of Pittsburgh today?",
+        "id": "150"
+    },
+    {
+        "question": "Which Pittsburgh university is known for robotics research?",
+        "id": "151"
+    },
+    {
+        "question": "What is the Golden Triangle in Pittsburgh?",
+        "id": "152"
+    },
+    {
+        "question": "What is the oldest operating theater in Pittsburgh?",
+        "id": "153"
+    },
+    {
+        "question": "Which Pittsburgh neighborhood is home to the Carnegie Museums?",
+        "id": "154"
+    },
+    {
+        "question": "What is the Pittsburgh Zoo & Aquarium known for?",
+        "id": "155"
+    },
+    {
+        "question": "What is the history behind the Roberto Clemente Bridge?",
+        "id": "156"
+    },
+    {
+        "question": "What is the Strip District famous for?",
+        "id": "157"
+    }
+]

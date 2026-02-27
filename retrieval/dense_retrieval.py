@@ -1,11 +1,3 @@
-"""Simple dense retriever over precomputed chunk embeddings.
-
-Expected artifacts in ``embed_dir`` (produced by ``retrieval/embed/embed.py``):
-- ``embeddings.npy``
-- ``embedding_to_uid.jsonl``
-- ``chunk_store.jsonl``
-"""
-
 from __future__ import annotations
 
 import argparse

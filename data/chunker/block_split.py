@@ -109,7 +109,6 @@ def _normalize_doc_text(text: str) -> str:
     value = str(text or "")
     value = value.replace("\r\n", "\n").replace("\r", "\n")
     value = value.replace("\xa0", " ")
-    # Remove inline Wikipedia numeric citation markers such as [58], [ 59 ].
     value = WIKIPEDIA_CITATION_RE.sub(" ", value)
     value = WHITESPACE_RE.sub(" ", value)
     return value.strip()

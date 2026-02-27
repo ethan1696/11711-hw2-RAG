@@ -1,5 +1,3 @@
-"""Sparse retrieval over cached BM25 index artifacts."""
-
 from __future__ import annotations
 
 import argparse
