@@ -1,11 +1,8 @@
 # Chunker config for full assignment run
-# Usage:
-#   python data/chunker/chunk.py --config data/chunker/config.full.yaml
 
 input_json: data/crawled_output/parsed/docs.jsonl
-output_dir: data/chunked_output2
+output_dir: data/chunked_output
 
-# fastText language classifier (`lid.176.bin`)
 quality_model_path: null
 quality_threshold: 0.0
 # Reject table-like blocks if `|` tokens are too dense
