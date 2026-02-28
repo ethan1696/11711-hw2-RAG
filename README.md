@@ -25,13 +25,12 @@ Main output: `data/crawled_output/parsed/docs.jsonl`
 python data/chunker/chunk.py --config data/chunker/config.full.yaml
 ```
 
-Main output: `data/chunked_output2/processed/chunks.jsonl`
 
 ## 4) Build Dense Embeddings
 
 ```bash
 python retrieval/embed/embed.py \
-  --input_chunks data/chunked_output2/processed/chunks.jsonl \
+  --input_chunks data/chunked_output/processed/chunks.jsonl \
   --output_dir retrieval/output_embed \
   --device cuda:6
 ```
@@ -40,7 +39,7 @@ python retrieval/embed/embed.py \
 
 ```bash
 python retrieval/build_bm25_index.py \
-  --input_chunks data/chunked_output2/processed/chunks.jsonl \
+  --input_chunks data/chunked_output/processed/chunks.jsonl \
   --output_dir retrieval/output_embed
 ```
 
