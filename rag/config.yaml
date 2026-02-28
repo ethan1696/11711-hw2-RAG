@@ -6,13 +6,12 @@ sparse_index_name: bm25_index.pkl
 sparse_chunk_store_name: null
 # Embedding/retriever model device (for dense/hybrid retrieval)
 embed_device: cuda:6
-# legacy alias still supported: dense_device
 dense_dtype: auto
 
 llm_model_name: Qwen/Qwen2.5-14B-Instruct
 llm_torch_dtype: auto
-# LLM generation device
 
+# LLM generation device
 llm_device: cuda:3
 llm_device_map: null
 trust_remote_code: true
